@@ -1,6 +1,11 @@
 # Prerequisites
 *.d
 
+# For VS nad VSCode
+CppProperties.json
+.vs/**
+.vscode/**
+
 # Compiled Object files
 *.slo
 *.lo
