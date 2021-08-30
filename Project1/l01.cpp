@@ -6,6 +6,7 @@
 #include <fstream>
 #include <random>
 #include <string>
+#include <cmath>
 using namespace std;
 
 class PPMGenerator
@@ -49,30 +50,12 @@ public:
         outfile.close();
         cout << "Created file." << endl;
     }
-    void bresenhamLine(int x1, int y1, int x2, int y2)
+    void case1and2(int x1, int y1, int x2, int y2, int changeX, int changeY)
     {
-        // 12 cases
-        // 6 cases for X Direct Axis
-        // Case 1: x2 > x1 and y2 > y1
-        // Case 2: x2 < x1 and y2 < y1
-        // Case 3: x2 > x1 and y2 = y1
-        // Case 4: x2 < x1 and y2 = y1
-        // Case 5: x2 < x1 and y2 > y1
-        // Case 6: x2 > x1 and y2 < y1
-        // 6 cases for Y Direct Axis
-        // Case 7: x2 > x1 and y2 > y1
-        // Case 8: x2 < x1 and y2 < y1
-        // Case 9: x2 > x1 and y2 = y1
-        // Case 10: x2 < x1 and y2 = y1
-        // Case 11: x2 = x1 and y2 > y1
-        // Case 12: x2 = x1 and y2 < x1
-
-        int changeX = x2 - x1;
-        int changeY = y2 - y1;
         int j = y1;
         int error = changeY - changeX;
 
-        for (int i = x1; i < (x2 - 1); i++)
+        for (int i = x1; i < x2; i++)
         {
             image[i][j] = 1;
             if (error >= 0)
@@ -82,6 +65,79 @@ public:
             }
             error += changeY;
         }
+    }
+    void case3and4(int x1, int y, int x2)
+    {
+        for (int i = x1; i < x2; i++)
+        {
+            image[i][y] = 1;
+        }
+    }
+    void case5and6(int x1, int y1, int x2, int y2, int changeX, int changeY)
+    {
+        int j = y1;
+        int error = changeY - changeX;
+
+        for (int i = x1; i >= x2; i--)
+        {
+            image[i][j] = 1;
+            if (error >= 0)
+            {
+                j += 1;
+                error -= changeX;
+            }
+            error += changeY;
+        }
+    }
+    void bresenhamLine(int x1, int y1, int x2, int y2)
+    {
+        int changeX = abs(x2 - x1);
+        int changeY = abs(y2 - y1);
+
+        // 12 cases
+        if (changeX >= changeY) // 6 cases for X Direct Axis
+        {
+            if (x2 > x1 && y2 > y1) // Case 1: x2 > x1 and y2 > y1
+            {
+                cout << "Case 1" << endl;
+                case1and2(x1, y1, x2, y2, changeX, changeY);
+            }
+            else if (x2 < x1 && y2 < y1) // Case 2: x2 < x1 and y2 < y1
+            {
+                cout << "Case 2" << endl;
+                case1and2(x2, y2, x1, y1, changeX, changeY);
+            }
+            else if (x2 > x1 && y2 == y1) // Case 3: x2 > x1 and y2 = y1
+            {
+                cout << "Case 3" << endl;
+                case3and4(x1, y1, x2);
+            }
+            else if (x2 < x1 && y2 == y1) // Case 4: x2 < x1 and y2 = y1
+            {
+                cout << "Case 4" << endl;
+                case3and4(x2, y1, x1);
+            }
+            else if (x2 < x1 && y2 > y1) // Case 5: x2 < x1 and y2 > y1
+            {
+                cout << "Case 5" << endl;
+                case5and6(x1, y1, x2, y2, changeX, changeY);
+            }
+            else if (x2 > x1 && y2 < y1) // Case 6: x2 > x1 and y2 < y1
+            {
+                cout << "Case 6" << endl;
+                case5and6(x2, y2, x1, y1, changeX, changeY);
+            }
+        }
+        else // 6 cases for Y Direct Axis
+        {
+        }
+
+        // Case 7: x2 > x1 and y2 > y1
+        // Case 8: x2 < x1 and y2 < y1
+        // Case 9: x2 > x1 and y2 < y1
+        // Case 10: x2 < x1 and y2 > y1
+        // Case 11: x2 = x1 and y2 > y1
+        // Case 12: x2 = x1 and y2 < y1
     }
     void drawTriangle()
     {
@@ -128,7 +184,7 @@ int main()
     c->test();
     // c->drawTriangle();
     // 33 36 27 15 43 35
-    c->bresenhamLine(2, 2, 2, 20);
+    c->bresenhamLine(3, 0, 0, 3);
     c->createPPMFile();
     delete c;
     return 0;
