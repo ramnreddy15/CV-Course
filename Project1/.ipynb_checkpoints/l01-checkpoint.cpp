@@ -52,7 +52,9 @@ public:
         cout << "Created file." << endl;
     }
     void setPixel(int x, int y, int shade) {
-        image[x][y] = shade;
+        if(x >= 0 && y>= 0 && y < sizeof(image)/sizeof(image[0]) && x < sizeof(image[0])/sizeof(int)) {
+            image[x][y] = shade;
+        }        
     }
     void case1and2(int x1, int y1, int x2, int y2, int changeX, int changeY)
     {
@@ -233,13 +235,13 @@ public:
         cout << "Triangle has been drawn." << endl;
     }
     void drawCircle(int centerX, int centerY, int r) {
-        int x, y, xmax, y2, y2_new, ty;
+        int x=0, y=0, xmax=0, y2=0, y2_new=0, ty=0;
         xmax = (int) (r * 0.70710678); // maximum x at radius/sqrt(2)
         y = r;
         y2 = y * y;
         ty = (2 * y) - 1;
         y2_new = y2;
-        for (x = 0; x <= xmax; x++) {
+        for (x = 0; x <= xmax+2; x++) {
             if ((y2 - y2_new) >= ty) {
                 y2 -= ty;
                 y -= 1;
@@ -257,7 +259,43 @@ public:
         }
     }
     void drawIncircle(){
-//         https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
+        double a =0.0,b=0.0,c=0.0,s=0.0,r=0.0;
+        a = abs(sqrt(pow(threePoints[0]-threePoints[2],2) + pow(threePoints[1]-threePoints[3],2))); // AB
+        b = abs(sqrt(pow(threePoints[1]-threePoints[4],2) + pow(threePoints[2]-threePoints[5],2))); // BC
+        c = abs(sqrt(pow(threePoints[0]-threePoints[4],2) + pow(threePoints[1]-threePoints[5],2))); // AC
+        s=0.5*(a+b+c);
+        r=sqrt(((s-a)*(s-b)*(s-c))/s);
+        
+        // Find point s-a from vertex a to b
+        double dt = s-a;
+        //         https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
+        double t = dt/a;
+        double xIC = (((1-t)*threePoints[0]) + (t*threePoints[2]) ); // X for s-a distance form a
+        double yIC = (((1-t)*threePoints[1]) + (t*threePoints[3]) ); // Y for s-a distance form a
+        
+        // Perpendicular line to AB
+        double mAB = pow(((threePoints[3]-threePoints[1]) / (threePoints[2] - threePoints[0])),-1); // slope
+        double yAB = yIC-(mAB*xIC);// y intercept
+        
+        // Find point s-a from vertex a to c
+        dt = s-a;
+        //         https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
+        t = dt/c;
+        double xSA = (((1-t)*threePoints[0]) + (t*threePoints[4]) ); // X for s-a distance form a
+        double ySA = (((1-t)*threePoints[1]) + (t*threePoints[5]) ); // Y for s-a distance form a
+        
+        // Perpendicular line to AB
+        double mAC = pow(((threePoints[5]-threePoints[1]) / (threePoints[4] - threePoints[0])),-1); // slope
+        double yAC = ySA-(mAC*xSA);// y intercept
+        
+        double xC = (yAC-yAB)/(mAB-mAC);
+        double yC = (mAB*xC) + yAB;
+        
+        drawCircle((int) xC,(int) yC,(int) r);
+        cout << xC << " " << yC << endl;
+    }
+    void drawCircumcenter() {
+        
     }
     ~PPMGenerator() { cout << "PPMGenerator has been deleted." << endl; }
 };
@@ -266,8 +304,11 @@ int main()
 {
     PPMGenerator *c = new PPMGenerator();
     c->test();
-//     c->drawTriangle();
-    c->drawCircle(25,25,25);
+    c->drawTriangle();
+//     c->drawCircle(25,400,100);
+    cout << "here" <<endl;
+    c->drawIncircle();
+//     c->setPixel(25,25,0);
     // 33 36 27 15 43 35
 //     c->bresenhamLine(1,25,1,5);
     c->createPPMFile();
