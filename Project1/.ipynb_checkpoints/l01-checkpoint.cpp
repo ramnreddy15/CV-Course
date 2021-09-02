@@ -51,6 +51,9 @@ public:
         outfile.close();
         cout << "Created file." << endl;
     }
+    void setPixel(int x, int y, int shade) {
+        image[x][y] = shade;
+    }
     void case1and2(int x1, int y1, int x2, int y2, int changeX, int changeY)
     {
         int j = y1;
@@ -58,7 +61,7 @@ public:
 
         for (int i = x1; i < x2; i++)
         {
-            image[i][j] = 1;
+            setPixel(i, j, 1);
             if (error >= 0)
             {
                 j += 1;
@@ -71,7 +74,7 @@ public:
     {
         for (int i = x1; i < x2; i++)
         {
-            image[i][y] = 1;
+            setPixel(i, y, 1);
         }
     }
     void case5and6(int x1, int y1, int x2, int y2, int changeX, int changeY)
@@ -81,7 +84,7 @@ public:
 
         for (int i = x1; i >= x2; i--)
         {
-            image[i][j] = 1;
+            setPixel(i, j, 1);
             if (error >= 0)
             {
                 j += 1;
@@ -97,7 +100,7 @@ public:
 
         for (int i = y1; i < y2; i++)
         {
-            image[j][i] = 1;
+            setPixel(j, i, 1);
             if (error >= 0)
             {
                 j += 1;
@@ -113,7 +116,7 @@ public:
 
         for (int i = y1; i >= y2; i--)
         {
-            image[j][i] = 1;
+            setPixel(j, i, 1);
             if (error >= 0)
             {
                 j += 1;
@@ -126,7 +129,7 @@ public:
     {
         for (int i = y1; i < y2; i++)
         {
-            image[x][i] = 1;
+            setPixel(x, i, 1);
         }
     }
     void bresenhamLine(int x1, int y1, int x2, int y2)
@@ -229,8 +232,32 @@ public:
         bresenhamLine(threePoints[2], threePoints[3], threePoints[4], threePoints[5]);
         cout << "Triangle has been drawn." << endl;
     }
+    void drawCircle(int centerX, int centerY, int r) {
+        int x, y, xmax, y2, y2_new, ty;
+        xmax = (int) (r * 0.70710678); // maximum x at radius/sqrt(2)
+        y = r;
+        y2 = y * y;
+        ty = (2 * y) - 1;
+        y2_new = y2;
+        for (x = 0; x <= xmax; x++) {
+            if ((y2 - y2_new) >= ty) {
+                y2 -= ty;
+                y -= 1;
+                ty -= 2;
+            }
+            setPixel (centerX + x, centerY + y, 1);
+            setPixel (centerX +x,centerY + -y, 1);
+            setPixel (centerX +-x,centerY+ y, 1);
+            setPixel (centerX +-x,centerY+ -y, 1);
+            setPixel (centerX +y,centerY+ x, 1);
+            setPixel (centerX +y, centerY+-x, 1);
+            setPixel (centerX +-y,centerY+ x, 1);
+            setPixel (centerX +-y,centerY+ -x, 1);
+            y2_new -= (2 * x) - 3;
+        }
+    }
     void drawIncircle(){
-        
+//         https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
     }
     ~PPMGenerator() { cout << "PPMGenerator has been deleted." << endl; }
 };
@@ -239,7 +266,8 @@ int main()
 {
     PPMGenerator *c = new PPMGenerator();
     c->test();
-    c->drawTriangle();
+//     c->drawTriangle();
+    c->drawCircle(25,25,25);
     // 33 36 27 15 43 35
 //     c->bresenhamLine(1,25,1,5);
     c->createPPMFile();
