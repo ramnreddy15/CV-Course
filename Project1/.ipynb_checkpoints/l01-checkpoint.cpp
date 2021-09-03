@@ -6,13 +6,16 @@
 #include <fstream>
 #include <random>
 #include <string>
+#include<time.h>
 #include <cmath>
+#include<limits>
+
 using namespace std;
 
 class PPMGenerator
 {
 private:
-    int image[100][100] = {{0}};
+    int image[800][800] = {{0}};
     int threePoints[6] = {0};
     int rows;
     int cols;
@@ -52,7 +55,7 @@ public:
         cout << "Created file." << endl;
     }
     void setPixel(int x, int y, int shade) {
-        if(x >= 0 && y>= 0 && y < sizeof(image)/sizeof(image[0]) && x < sizeof(image[0])/sizeof(int)) {
+        if(x >= 0 && y>= 0 && y < rows && x < cols) {
             image[x][y] = shade;
         }        
     }
@@ -201,6 +204,8 @@ public:
     }
     void drawTriangle()
     {
+        srand(time(0));
+            
         int distinctPoints = 1;
         bool distinct = true;
         while (distinctPoints < 4)
@@ -258,44 +263,65 @@ public:
             y2_new -= (2 * x) - 3;
         }
     }
+    void calcIncenter(double *intersectX,double *intersectY,double *r) {
+        double a =0.0,b=0.0,c=0.0,s=0.0;
+        
+        a = sqrt(pow(threePoints[0]-threePoints[2],2) + pow(threePoints[1]-threePoints[3],2)); // AB
+        b = sqrt(pow(threePoints[0]-threePoints[4],2) + pow(threePoints[1]-threePoints[5],2)); // BC
+        c = sqrt(pow(threePoints[2]-threePoints[4],2) + pow(threePoints[3]-threePoints[5],2)); // AC
+        s=0.5*(a+b+c);
+        *r=sqrt(((s-a)*(s-b)*(s-c))/s);
+        
+        *intersectX = (c*threePoints[0] + a*threePoints[4] + b*threePoints[2])/(a+b+c);
+        *intersectY = (c*threePoints[1] + a*threePoints[5] + b*threePoints[3])/(a+b+c);
+    }
     void drawIncircle(){
-        double a =0.0,b=0.0,c=0.0,s=0.0,r=0.0;
-        a = abs(sqrt(pow(threePoints[0]-threePoints[2],2) + pow(threePoints[1]-threePoints[3],2))); // AB
-        b = abs(sqrt(pow(threePoints[1]-threePoints[4],2) + pow(threePoints[2]-threePoints[5],2))); // BC
-        c = abs(sqrt(pow(threePoints[0]-threePoints[4],2) + pow(threePoints[1]-threePoints[5],2))); // AC
+        double r=0.0, intersectX=0.0, intersectY=0.0;
+        
+        calcIncenter(&intersectX, &intersectY, &r);
+        
+        drawCircle((int) intersectX,(int) intersectY,(int) r);
+        cout << "Incircle has been drawn" << endl;
+    }
+    void calcCircumcenter(double *intersectX, double *intersectY, double *R) {
+        double a =0.0,b=0.0,c=0.0,s=0.0,r=0.0,angleA =0.0, angleB=0.0,angleC=0.0;
+        
+        a = sqrt(pow(threePoints[0]-threePoints[2],2) + pow(threePoints[1]-threePoints[3],2)); // AB
+        b = sqrt(pow(threePoints[0]-threePoints[4],2) + pow(threePoints[1]-threePoints[5],2)); // BC
+        c = sqrt(pow(threePoints[2]-threePoints[4],2) + pow(threePoints[3]-threePoints[5],2)); // AC
+        
         s=0.5*(a+b+c);
         r=sqrt(((s-a)*(s-b)*(s-c))/s);
+        *R = (a*b*c)/(4*r*s);
         
-        // Find point s-a from vertex a to b
-        double dt = s-a;
-        //         https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
-        double t = dt/a;
-        double xIC = (((1-t)*threePoints[0]) + (t*threePoints[2]) ); // X for s-a distance form a
-        double yIC = (((1-t)*threePoints[1]) + (t*threePoints[3]) ); // Y for s-a distance form a
-        
-        // Perpendicular line to AB
-        double mAB = pow(((threePoints[3]-threePoints[1]) / (threePoints[2] - threePoints[0])),-1); // slope
-        double yAB = yIC-(mAB*xIC);// y intercept
-        
-        // Find point s-a from vertex a to c
-        dt = s-a;
-        //         https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
-        t = dt/c;
-        double xSA = (((1-t)*threePoints[0]) + (t*threePoints[4]) ); // X for s-a distance form a
-        double ySA = (((1-t)*threePoints[1]) + (t*threePoints[5]) ); // Y for s-a distance form a
-        
-        // Perpendicular line to AB
-        double mAC = pow(((threePoints[5]-threePoints[1]) / (threePoints[4] - threePoints[0])),-1); // slope
-        double yAC = ySA-(mAC*xSA);// y intercept
-        
-        double xC = (yAC-yAB)/(mAB-mAC);
-        double yC = (mAB*xC) + yAB;
-        
-        drawCircle((int) xC,(int) yC,(int) r);
-        cout << xC << " " << yC << endl;
+        angleC=acos((pow(c,2)-pow(a,2)-pow(b,2))/(-2*a*b)); //Calculates in radians
+        angleB=acos((pow(b,2)-pow(a,2)-pow(c,2))/(-2*a*c));
+        angleA=acos((pow(a,2)-pow(b,2)-pow(c,2))/(-2*b*c));
+               
+        *intersectX = ((threePoints[0]*sin(2*angleC))+(threePoints[2]*sin(2*angleB))+(threePoints[4]*sin(2*angleA)))/(sin(2*angleA)+sin(2*angleB)+sin(2*angleC));
+        *intersectY = ((threePoints[1]*sin(2*angleC))+(threePoints[3]*sin(2*angleB))+(threePoints[5]*sin(2*angleA)))/(sin(2*angleA)+sin(2*angleB)+sin(2*angleC));
     }
-    void drawCircumcenter() {
+    void drawCircumcircle() {
+        double R=0.0, intersectX=0.0, intersectY=0.0;
         
+        calcCircumcenter(&intersectX, &intersectY, &R);
+        
+        drawCircle((int) intersectX,(int) intersectY,(int) R);
+        cout << "Circumcircle has been drawn" << endl;
+    }
+    void calcCentroid(double *intersectX, double *intersectY) {
+        *intersectX = (threePoints[0]+threePoints[2]+threePoints[4])/3;
+        *intersectY = (threePoints[1]+threePoints[3]+threePoints[5])/3;
+    }
+    void drawEulerLine() {
+        double circumX = 0.0, circumY=0.0, centroidX=0.0,centroidY=0.0,slope=0.0,b=0.0, temp=0.0;
+        
+        calcCircumcenter(&circumX, &circumY, &temp);
+        calcCentroid(&centroidX, &centroidY);
+        slope=(circumY-centroidY)/(circumX-centroidX);
+        b = centroidY-(slope*centroidX);
+        
+        bresenhamLine((0-b)/slope, 0,(800-b)/slope ,800);
     }
     ~PPMGenerator() { cout << "PPMGenerator has been deleted." << endl; }
 };
@@ -305,12 +331,10 @@ int main()
     PPMGenerator *c = new PPMGenerator();
     c->test();
     c->drawTriangle();
-//     c->drawCircle(25,400,100);
     cout << "here" <<endl;
     c->drawIncircle();
-//     c->setPixel(25,25,0);
-    // 33 36 27 15 43 35
-//     c->bresenhamLine(1,25,1,5);
+    c->drawCircumcircle();
+    c->drawEulerLine();
     c->createPPMFile();
     delete c;
     return 0;
