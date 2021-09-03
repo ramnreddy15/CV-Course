@@ -55,7 +55,7 @@ public:
         cout << x << " " << y << endl;
         if (x >= 0 && y >= 0 && y < rows && x < cols)
         {
-            image[x][y] = shade;
+            image[800 - y][x] = shade;
         }
     }
     void case1and2(int x1, int y1, int x2, int y2, int changeX, int changeY)
