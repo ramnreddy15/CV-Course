@@ -316,7 +316,7 @@ public:
                 slope = (circumY - centroidY) / (circumX - centroidX);
                 b = centroidY - (slope * centroidX);
 
-                bresenhamLine((0 - (b * 800)) / slope, 0, (800 - (b * 800)) / slope, 800);
+                bresenhamLine((0 - (b * rows)) / slope, 0, (rows - (b * rows)) / slope, 800);
                 cout << "Euler line has been drawn" << endl;
             }
             if (drawNinePoint) // Draws the nine point circle
