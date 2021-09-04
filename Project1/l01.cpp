@@ -12,20 +12,23 @@
 
 using namespace std;
 
+// This is a class that can generate a PPM3 file with cool shapes
 class PPMGenerator
 {
 private:
     int image[800][800] = {{0}};
-    double threePoints[6] = {0};
     int rows;
     int cols;
 
 public:
+    // This is the constructor
     PPMGenerator()
     {
         rows = sizeof(image) / sizeof(image[0]);
         cols = sizeof(image[0]) / sizeof(int);
     }
+
+    // This method creates a PPM file from the image array when called
     void createPPMFile()
     {
         ofstream outfile("ppmImage.ppm");
@@ -50,14 +53,47 @@ public:
         outfile.close();
         cout << "Created file." << endl;
     }
-    void setPixel(int x, int y, int shade)
+
+    // This method generates random pixels from an array
+    void generatePoints(int size, double arr[])
     {
-        cout << x << " " << y << endl;
-        if (x >= 0 && y >= 0 && y < rows && x < cols)
+        if (size % 2 == 0)
         {
-            image[800 - y][x] = shade;
+            srand(time(0)); // Generates random seed
+
+            int distinctPoints = 1;
+            bool distinct = true;
+            while (distinctPoints < (size / 2) + 1) // Gets random points
+            {
+                double x = (float)rand() / RAND_MAX;
+                double y = (float)rand() / RAND_MAX;
+                for (int i = 0; i < distinctPoints; i++)
+                {
+                    if (arr[i] == x && arr[i + 1] == y)
+                    {
+                        distinct = false;
+                    }
+                }
+                if (distinct)
+                {
+                    arr[(distinctPoints * 2) - 2] = x;
+                    arr[(distinctPoints * 2) - 1] = y;
+                }
+                distinctPoints += 1;
+            }
         }
     }
+
+    // This method sets a pixel in the array when called
+    void setPixel(int x, int y, int shade)
+    {
+        if (x >= 0 && y >= 0 && y < rows && x < cols)
+        {
+            image[rows - y][x] = shade;
+        }
+    }
+
+    // Case 1 and 2 when drawing a line: (x2 > x1 and y2 > y1) or (x2 < x1 and y2 < y1)
     void case1and2(int x1, int y1, int x2, int y2, int changeX, int changeY)
     {
         int j = y1;
@@ -74,6 +110,8 @@ public:
             error += changeY;
         }
     }
+
+    // Case 3 and 4 when drawing a line: () or ()
     void case3and4(int x1, int y, int x2)
     {
         for (int i = x1; i < x2; i++)
@@ -81,6 +119,8 @@ public:
             setPixel(i, y, 1);
         }
     }
+
+    // Case 5 and 6 when drawing a line: () or ()
     void case5and6(int x1, int y1, int x2, int y2, int changeX, int changeY)
     {
         int j = y1;
@@ -97,6 +137,8 @@ public:
             error += changeY;
         }
     }
+
+    // Case 7 and 8 when drawing a line: () or ()
     void case7and8(int x1, int y1, int x2, int y2, int changeX, int changeY)
     {
         int j = x1;
@@ -113,6 +155,8 @@ public:
             error += changeX;
         }
     }
+
+    // Case 9 and 10 when drawing a line: () or ()
     void case9and10(int x1, int y1, int x2, int y2, int changeX, int changeY)
     {
         int j = x1;
@@ -129,6 +173,8 @@ public:
             error += changeX;
         }
     }
+
+    // Case 11 and 12 when drawing a line: () or ()
     void case11and12(int x, int y1, int y2)
     {
         for (int i = y1; i < y2; i++)
@@ -136,6 +182,8 @@ public:
             setPixel(x, i, 1);
         }
     }
+
+    // This method creates a line in the image array when callled
     void bresenhamLine(int x1, int y1, int x2, int y2)
     {
         int changeX = abs(x2 - x1);
@@ -182,58 +230,43 @@ public:
                 cout << "Case 7" << endl;
                 case7and8(x1, y1, x2, y2, changeX, changeY);
             }
-            else if (x2 < x1 && y2 < y1)
-            { // Case 8: x2 < x1 and y2 < y1
+            else if (x2 < x1 && y2 < y1) // Case 8: x2 < x1 and y2 < y1
+            {
                 cout << "Case 8" << endl;
                 case7and8(x2, y2, x1, y1, changeX, changeY);
             }
-            else if (x2 > x1 && y2 < y1)
-            { // Case 9: x2 > x1 and y2 < y1
+            else if (x2 > x1 && y2 < y1) // Case 9: x2 > x1 and y2 < y1
+            {
                 cout << "Case 9" << endl;
                 case9and10(x1, y1, x2, y2, changeX, changeY);
             }
-            else if (x2 < x1 && y2 > y1)
-            { // Case 10: x2 < x1 and y2 > y1
+            else if (x2 < x1 && y2 > y1) // Case 10: x2 < x1 and y2 > y1
+            {
                 cout << "Case 10" << endl;
                 case9and10(x2, y2, x1, y1, changeX, changeY);
             }
-            else if (x2 = x1 && y2 > y1)
-            { // Case 11: x2 = x1 and y2 > y1
+            else if (x2 = x1 && y2 > y1) // Case 11: x2 = x1 and y2 > y1
+            {
                 cout << "Case 11" << endl;
-                case3and4(x1, y1, y2);
+                case11and12(x1, y1, y2);
             }
-            else
-            { // Case 12: x2 = x1 and y2 < y1
+            else // Case 12: x2 = x1 and y2 < y1
+            {
                 cout << "Case 12" << endl;
-                case3and4(x1, y2, y1);
+                case11and12(x1, y2, y1);
             }
         }
     }
-    void drawTriangle()
-    {
-        srand(time(0));
 
-        int distinctPoints = 1;
-        bool distinct = true;
-        while (distinctPoints < 4)
-        {
-            double x = (float)rand() / RAND_MAX;
-            double y = (float)rand() / RAND_MAX;
-            for (int i = 0; i < distinctPoints; i++)
-            {
-                if (threePoints[i] == x && threePoints[i + 1] == y)
-                {
-                    distinct = false;
-                }
-            }
-            if (distinct)
-            {
-                threePoints[(distinctPoints * 2) - 2] = x;
-                threePoints[(distinctPoints * 2) - 1] = y;
-            }
-            distinctPoints += 1;
-        }
-        for (int i = 0; i < 6; i++)
+    // This method generates points for a triangle and then draws it
+    // It can also draws the different centers of the triangle + euler line
+    void drawTriangle(bool drawInCircle, bool drawCircumCircle, bool drawEulerLine, bool drawNinePoint)
+    {
+        double threePoints[6] = {0};
+        int size = (sizeof threePoints / sizeof threePoints[0]); // Get size of array
+        generatePoints(size, threePoints);
+
+        for (int i = 0; i < size; i++)
         {
             cout << to_string(threePoints[i]) + " ";
         }
@@ -245,7 +278,63 @@ public:
         cout << "Line 2 has been drawn." << endl;
         bresenhamLine((int)(threePoints[2] * cols), (int)(threePoints[3] * rows), (int)(threePoints[4] * cols), (int)(threePoints[5] * rows));
         cout << "Triangle has been drawn." << endl;
+
+        // Draws the center circles if arguement is true
+        if (drawInCircle == true || drawEulerLine == true || drawCircumCircle == true || drawNinePoint == true)
+        {
+            double sideA = 0.0, sideB = 0.0, sideC = 0.0, s = 0.0;
+
+            sideA = sqrt(pow(threePoints[0] - threePoints[2], 2) + pow(threePoints[1] - threePoints[3], 2)); // AB
+            sideB = sqrt(pow(threePoints[0] - threePoints[4], 2) + pow(threePoints[1] - threePoints[5], 2)); // BC
+            sideC = sqrt(pow(threePoints[2] - threePoints[4], 2) + pow(threePoints[3] - threePoints[5], 2)); // AC
+            s = 0.5 * (sideA + sideB + sideC);
+
+            if (drawInCircle) // Draws the incircle
+            {
+                double r = 0.0, intersectX = 0.0, intersectY = 0.0;
+
+                calcIncenter(sideA, sideB, sideC, s, &intersectX, &intersectY, &r, threePoints);
+
+                drawCircle((int)(intersectX * cols), (int)(intersectY * rows), (int)(r * rows));
+                cout << "Incircle has been drawn" << endl;
+            }
+            if (drawCircumCircle) // Draws the circum circle
+            {
+                double R = 0.0, intersectX = 0.0, intersectY = 0.0;
+
+                calcCircumcenter(sideA, sideB, sideC, s, &intersectX, &intersectY, &R, threePoints);
+
+                drawCircle((int)(intersectX * cols), (int)(intersectY * rows), (int)(R * rows));
+                cout << "Circumcircle has been drawn" << endl;
+            }
+            if (drawEulerLine) // Draws the euler line
+            {
+                double circumX = 0.0, circumY = 0.0, centroidX = 0.0, centroidY = 0.0, slope = 0.0, b = 0.0, temp = 0.0;
+
+                calcCircumcenter(sideA, sideB, sideC, s, &circumX, &circumY, &temp, threePoints);
+                calcCentroid(&centroidX, &centroidY, threePoints);
+                slope = (circumY - centroidY) / (circumX - centroidX);
+                b = centroidY - (slope * centroidX);
+
+                bresenhamLine((0 - (b * 800)) / slope, 0, (800 - (b * 800)) / slope, 800);
+                cout << "Euler line has been drawn" << endl;
+            }
+            if (drawNinePoint) // Draws the nine point circle
+            {
+                double centerX = 0.0, centerY = 0.0, r = 0.0;
+
+                r = (sideA * sideB * sideC) / (sqrt((sideA + sideB + sideC) * (sideB + sideC - sideA) * (sideC + sideA - sideB) * (sideA + sideB - sideC)));
+                r = 0.5 * r;
+
+                calcNinePointCenter(sideA, sideB, sideC, s, &centerX, &centerY, threePoints);
+
+                drawCircle((int)(centerX * cols), (int)(centerY * rows), (int)(r * rows));
+                cout << "Nine point circle has been drawn" << endl;
+            }
+        }
     }
+
+    // Draws a circle given the center coordinates and radius
     void drawCircle(int centerX, int centerY, int r)
     {
         int x = 0, y = 0, xmax = 0, y2 = 0, y2_new = 0, ty = 0;
@@ -273,62 +362,41 @@ public:
             y2_new -= (2 * x) - 3;
         }
     }
-    void calcIncenter(double *intersectX, double *intersectY, double *r)
+
+    // This method calculates the incenter coordinates given the sides and semi perimeter of the trinagle
+    void calcIncenter(double sideA, double sideB, double sideC, double s, double *intersectX, double *intersectY, double *r, double threePoints[6])
     {
-        double a = 0.0, b = 0.0, c = 0.0, s = 0.0;
+        *r = sqrt(((s - sideA) * (s - sideB) * (s - sideC)) / s);
 
-        a = sqrt(pow(threePoints[0] - threePoints[2], 2) + pow(threePoints[1] - threePoints[3], 2)); // AB
-        b = sqrt(pow(threePoints[0] - threePoints[4], 2) + pow(threePoints[1] - threePoints[5], 2)); // BC
-        c = sqrt(pow(threePoints[2] - threePoints[4], 2) + pow(threePoints[3] - threePoints[5], 2)); // AC
-        s = 0.5 * (a + b + c);
-        *r = sqrt(((s - a) * (s - b) * (s - c)) / s);
-
-        *intersectX = (c * threePoints[0] + a * threePoints[4] + b * threePoints[2]) / (a + b + c);
-        *intersectY = (c * threePoints[1] + a * threePoints[5] + b * threePoints[3]) / (a + b + c);
+        *intersectX = (sideC * threePoints[0] + sideA * threePoints[4] + sideB * threePoints[2]) / (sideA + sideB + sideC);
+        *intersectY = (sideC * threePoints[1] + sideA * threePoints[5] + sideB * threePoints[3]) / (sideA + sideB + sideC);
     }
-    void drawIncircle()
+
+    // This method calculates the circumcenter coordinates given the sides and semi perimeter
+    void calcCircumcenter(double sideA, double sideB, double sideC, double s, double *intersectX, double *intersectY, double *R, double threePoints[6])
     {
-        double r = 0.0, intersectX = 0.0, intersectY = 0.0;
+        double r = 0.0, angleA = 0.0, angleB = 0.0, angleC = 0.0;
 
-        calcIncenter(&intersectX, &intersectY, &r);
+        r = sqrt(((s - sideA) * (s - sideB) * (s - sideC)) / s);
+        *R = (sideA * sideB * sideC) / (4 * r * s);
 
-        drawCircle((int)(intersectX * cols), (int)(intersectY * rows), (int)(r * rows));
-        cout << "Incircle has been drawn" << endl;
-    }
-    void calcCircumcenter(double *intersectX, double *intersectY, double *R)
-    {
-        double a = 0.0, b = 0.0, c = 0.0, s = 0.0, r = 0.0, angleA = 0.0, angleB = 0.0, angleC = 0.0;
-
-        a = sqrt(pow(threePoints[0] - threePoints[2], 2) + pow(threePoints[1] - threePoints[3], 2)); // AB
-        b = sqrt(pow(threePoints[0] - threePoints[4], 2) + pow(threePoints[1] - threePoints[5], 2)); // BC
-        c = sqrt(pow(threePoints[2] - threePoints[4], 2) + pow(threePoints[3] - threePoints[5], 2)); // AC
-
-        s = 0.5 * (a + b + c);
-        r = sqrt(((s - a) * (s - b) * (s - c)) / s);
-        *R = (a * b * c) / (4 * r * s);
-
-        angleC = acos((pow(c, 2) - pow(a, 2) - pow(b, 2)) / (-2 * a * b)); //Calculates in radians
-        angleB = acos((pow(b, 2) - pow(a, 2) - pow(c, 2)) / (-2 * a * c));
-        angleA = acos((pow(a, 2) - pow(b, 2) - pow(c, 2)) / (-2 * b * c));
+        angleC = acos((pow(sideC, 2) - pow(sideA, 2) - pow(sideB, 2)) / (-2 * sideA * sideB)); //Calculates in radians
+        angleB = acos((pow(sideB, 2) - pow(sideA, 2) - pow(sideC, 2)) / (-2 * sideA * sideC));
+        angleA = acos((pow(sideA, 2) - pow(sideB, 2) - pow(sideC, 2)) / (-2 * sideB * sideC));
 
         *intersectX = ((threePoints[0] * sin(2 * angleC)) + (threePoints[2] * sin(2 * angleB)) + (threePoints[4] * sin(2 * angleA))) / (sin(2 * angleA) + sin(2 * angleB) + sin(2 * angleC));
         *intersectY = ((threePoints[1] * sin(2 * angleC)) + (threePoints[3] * sin(2 * angleB)) + (threePoints[5] * sin(2 * angleA))) / (sin(2 * angleA) + sin(2 * angleB) + sin(2 * angleC));
     }
-    void drawCircumcircle()
-    {
-        double R = 0.0, intersectX = 0.0, intersectY = 0.0;
 
-        calcCircumcenter(&intersectX, &intersectY, &R);
-
-        drawCircle((int)(intersectX * cols), (int)(intersectY * rows), (int)(R * rows));
-        cout << "Circumcircle has been drawn" << endl;
-    }
-    void calcCentroid(double *intersectX, double *intersectY)
+    // This method calculates the centroid of a triangle
+    void calcCentroid(double *intersectX, double *intersectY, double threePoints[6])
     {
         *intersectX = (threePoints[0] + threePoints[2] + threePoints[4]) / 3;
         *intersectY = (threePoints[1] + threePoints[3] + threePoints[5]) / 3;
     }
-    void calcOrthocenter(double *intersectX, double *intersectY)
+
+    // This method calculates the orthocenter of the triangle
+    void calcOrthocenter(double *intersectX, double *intersectY, double threePoints[6])
     {
         double perpM1 = 0.0, perpM2 = 0.0, perpB1 = 0.0, perpB2 = 0.0;
 
@@ -341,56 +409,28 @@ public:
         *intersectX = (perpB2 - perpB1) / (perpM1 - perpM2);
         *intersectY = (perpM1 * *intersectX) + perpB1;
     }
-    void calcNinePointCenter(double *centerX, double *centerY)
+
+    // This method calculates the nine point center of a triangle given the sides and semi perimeter
+    void calcNinePointCenter(double sideA, double sideB, double sideC, double s, double *centerX, double *centerY, double threePoints[6])
     {
         double orthoCenterX = 0.0, orthoCenterY = 0.0, circumCenterX = 0.0, circumCenterY = 0.0, temp = 0.0;
 
-        calcOrthocenter(&orthoCenterX, &orthoCenterY);
-        calcCircumcenter(&circumCenterX, &circumCenterY, &temp);
+        calcOrthocenter(&orthoCenterX, &orthoCenterY, threePoints);
+        calcCircumcenter(sideA, sideB, sideC, s, &circumCenterX, &circumCenterY, &temp, threePoints);
 
+        // Find mid points of orthocenter and circumcenter which is the nine point center
         *centerX = (orthoCenterX + circumCenterX) / 2;
         *centerY = (orthoCenterY + circumCenterY) / 2;
     }
-    void drawNinePointCircle()
-    {
-        double a = 0.0, b = 0.0, c = 0.0, centerX = 0.0, centerY = 0.0, r = 0.0;
-
-        a = sqrt(pow(threePoints[0] - threePoints[2], 2) + pow(threePoints[1] - threePoints[3], 2)); // AB
-        b = sqrt(pow(threePoints[0] - threePoints[4], 2) + pow(threePoints[1] - threePoints[5], 2)); // BC
-        c = sqrt(pow(threePoints[2] - threePoints[4], 2) + pow(threePoints[3] - threePoints[5], 2)); // AC
-
-        r = (a * b * c) / (sqrt((a + b + c) * (b + c - a) * (c + a - b) * (a + b - c)));
-        r = 0.5 * r;
-
-        calcNinePointCenter(&centerX, &centerY);
-
-        drawCircle((int)(centerX * cols), (int)(centerY * rows), (int)(r * rows));
-        cout << "Nine point circle has been drawn" << endl;
-    }
-    void drawEulerLine()
-    {
-        double circumX = 0.0, circumY = 0.0, centroidX = 0.0, centroidY = 0.0, slope = 0.0, b = 0.0, temp = 0.0;
-
-        calcCircumcenter(&circumX, &circumY, &temp);
-        calcCentroid(&centroidX, &centroidY);
-        slope = (circumY - centroidY) / (circumX - centroidX);
-        b = centroidY - (slope * centroidX);
-
-        bresenhamLine((0 - (b * 800)) / slope, 0, (800 - (b * 800)) / slope, 800);
-        cout << "Euler line has been drawn" << endl;
-    }
+    // This is the object destructor
     ~PPMGenerator() { cout << "PPMGenerator has been deleted." << endl; }
 };
 
 int main()
 {
-    PPMGenerator *c = new PPMGenerator();
-    c->drawTriangle();
-    c->drawIncircle();
-    c->drawCircumcircle();
-    c->drawEulerLine();
-    c->drawNinePointCircle();
-    c->createPPMFile();
-    delete c;
+    PPMGenerator *c = new PPMGenerator();       // Creates the object
+    c->drawTriangle(false, false, false, true); // Create triangle with specified centers or lines
+    c->createPPMFile();                         // Creates the PPM3 file
+    delete c;                                   // Deletes object
     return 0;
 }
