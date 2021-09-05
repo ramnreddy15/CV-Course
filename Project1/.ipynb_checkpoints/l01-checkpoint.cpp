@@ -89,7 +89,7 @@ public:
     {
         if (x >= 0 && y >= 0 && y < rows && x < cols)
         {
-            image[rows - y][x] = shade;
+            image[rows - 1 - y][x] = shade;
         }
     }
 
@@ -262,12 +262,14 @@ public:
     // It can also draws the different centers of the triangle + euler line
     void drawTriangle(bool drawInCircle, bool drawCircumCircle, bool drawEulerLine, bool drawNinePoint)
     {
-        double threePoints[6] = {0};
+        //         double threePoints[6] = {0};
+        double threePoints[6] = {0.250000, 0.375000, 0.125000, 0.125000, 0.375000, 0.125000};
         int size = (sizeof threePoints / sizeof threePoints[0]); // Get size of array
-        generatePoints(size, threePoints);
+                                                                 //         generatePoints(size, threePoints);
 
         for (int i = 0; i < size; i++)
         {
+            // threePoints[i] = threePoints[i] / 800;
             cout << to_string(threePoints[i]) + " ";
         }
         cout << endl;
@@ -296,6 +298,7 @@ public:
                 calcIncenter(sideA, sideB, sideC, s, &intersectX, &intersectY, &r, threePoints);
 
                 drawCircle((int)(intersectX * cols), (int)(intersectY * rows), (int)(r * rows));
+                cout << intersectX * cols << " " << intersectY * rows << " " << r * rows << endl;
                 cout << "Incircle has been drawn" << endl;
             }
             if (drawCircumCircle) // Draws the circum circle
@@ -305,6 +308,7 @@ public:
                 calcCircumcenter(sideA, sideB, sideC, s, &intersectX, &intersectY, &R, threePoints);
 
                 drawCircle((int)(intersectX * cols), (int)(intersectY * rows), (int)(R * rows));
+                cout << intersectX * cols << " " << intersectY * rows << " " << R * rows << endl;
                 cout << "Circumcircle has been drawn" << endl;
             }
             if (drawEulerLine) // Draws the euler line
@@ -313,10 +317,19 @@ public:
 
                 calcCircumcenter(sideA, sideB, sideC, s, &circumX, &circumY, &temp, threePoints);
                 calcCentroid(&centroidX, &centroidY, threePoints);
-                slope = (circumY - centroidY) / (circumX - centroidX);
-                b = centroidY - (slope * centroidX);
 
-                bresenhamLine((0 - (b * rows)) / slope, 0, (rows - (b * rows)) / slope, 800);
+                slope = (circumY - centroidY) / (circumX - centroidX);
+                if (isfinite(slope))
+                {
+                    b = centroidY - (slope * centroidX);
+                    bresenhamLine((0 - (b * rows)) / slope, 0, (rows - (b * rows)) / slope, rows);
+                    cout << slope << " " << b << endl;
+                }
+                else
+                {
+                    bresenhamLine(circumX * cols, 0, circumX * cols, rows);
+                    cout << "x = " << circumX * rows << endl;
+                }
                 cout << "Euler line has been drawn" << endl;
             }
             if (drawNinePoint) // Draws the nine point circle
@@ -329,6 +342,7 @@ public:
                 calcNinePointCenter(sideA, sideB, sideC, s, &centerX, &centerY, threePoints);
 
                 drawCircle((int)(centerX * cols), (int)(centerY * rows), (int)(r * rows));
+                cout << centerX * cols << " " << centerY * rows << " " << r * rows << endl;
                 cout << "Nine point circle has been drawn" << endl;
             }
         }
@@ -375,17 +389,32 @@ public:
     // This method calculates the circumcenter coordinates given the sides and semi perimeter
     void calcCircumcenter(double sideA, double sideB, double sideC, double s, double *intersectX, double *intersectY, double *R, double threePoints[6])
     {
-        double r = 0.0, angleA = 0.0, angleB = 0.0, angleC = 0.0;
+        double r = 0.0, perpM1 = 0.0, perpM2 = 0.0, perpB1 = 0.0, perpB2 = 0.0;
 
         r = sqrt(((s - sideA) * (s - sideB) * (s - sideC)) / s);
         *R = (sideA * sideB * sideC) / (4 * r * s);
 
-        angleC = acos((pow(sideC, 2) - pow(sideA, 2) - pow(sideB, 2)) / (-2 * sideA * sideB)); //Calculates in radians
-        angleB = acos((pow(sideB, 2) - pow(sideA, 2) - pow(sideC, 2)) / (-2 * sideA * sideC));
-        angleA = acos((pow(sideA, 2) - pow(sideB, 2) - pow(sideC, 2)) / (-2 * sideB * sideC));
+        perpM1 = -1 * pow((threePoints[3] - threePoints[1]) / (threePoints[2] - threePoints[0]), -1);
+        perpB1 = ((threePoints[1] + threePoints[3]) / 2) - (perpM1 * ((threePoints[0] + threePoints[2]) / 2));
 
-        *intersectX = ((threePoints[0] * sin(2 * angleC)) + (threePoints[2] * sin(2 * angleB)) + (threePoints[4] * sin(2 * angleA))) / (sin(2 * angleA) + sin(2 * angleB) + sin(2 * angleC));
-        *intersectY = ((threePoints[1] * sin(2 * angleC)) + (threePoints[3] * sin(2 * angleB)) + (threePoints[5] * sin(2 * angleA))) / (sin(2 * angleA) + sin(2 * angleB) + sin(2 * angleC));
+        perpM2 = -1 * pow((threePoints[5] - threePoints[1]) / (threePoints[4] - threePoints[0]), -1);
+        perpB2 = ((threePoints[1] + threePoints[5]) / 2) - (perpM2 * ((threePoints[0] + threePoints[4]) / 2));
+
+        if (!isfinite(perpM2))
+        {
+            *intersectX = (threePoints[0] + threePoints[4]) / 2;
+            *intersectY = (perpM1 * *intersectX) + perpB1;
+        }
+        else if (!isfinite(perpM1))
+        {
+            *intersectX = (threePoints[0] + threePoints[2]) / 2;
+            *intersectY = (perpM2 * *intersectX) + perpB2;
+        }
+        else
+        {
+            *intersectX = (perpB2 - perpB1) / (perpM1 - perpM2);
+            *intersectY = (perpM1 * *intersectX) + perpB1;
+        }
     }
 
     // This method calculates the centroid of a triangle
@@ -405,6 +434,17 @@ public:
 
         perpM2 = -1 * pow((threePoints[5] - threePoints[1]) / (threePoints[4] - threePoints[0]), -1);
         perpB2 = threePoints[3] - (perpM2 * threePoints[2]);
+
+        if (!isfinite(perpM2))
+        {
+            perpM2 = -1 * pow((threePoints[5] - threePoints[3]) / (threePoints[4] - threePoints[2]), -1);
+            perpB2 = threePoints[1] - (perpM2 * threePoints[0]);
+        }
+        else if (!isfinite(perpM1))
+        {
+            perpM1 = -1 * pow((threePoints[5] - threePoints[3]) / (threePoints[4] - threePoints[2]), -1);
+            perpB1 = threePoints[1] - (perpM1 * threePoints[0]);
+        }
 
         *intersectX = (perpB2 - perpB1) / (perpM1 - perpM2);
         *intersectY = (perpM1 * *intersectX) + perpB1;
@@ -428,9 +468,9 @@ public:
 
 int main()
 {
-    PPMGenerator *c = new PPMGenerator();       // Creates the object
-    c->drawTriangle(false, false, false, true); // Create triangle with specified centers or lines
-    c->createPPMFile();                         // Creates the PPM3 file
-    delete c;                                   // Deletes object
+    PPMGenerator *c = new PPMGenerator();    // Creates the object
+    c->drawTriangle(true, true, true, true); // Create triangle with specified centers or lines
+    c->createPPMFile();                      // Creates the PPM3 file
+    delete c;                                // Deletes object
     return 0;
 }
