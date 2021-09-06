@@ -12,8 +12,99 @@
 
 using namespace std;
 
+// This class has the methods for coordinate geometry
+class CoordinateGeometry
+{
+public:
+    // This method calculates the incenter coordinates given the sides and semi perimeter of the trinagle
+    void calcIncenter(double sideA, double sideB, double sideC, double s, double *intersectX, double *intersectY, double *r, double threePoints[6])
+    {
+        *r = sqrt(((s - sideA) * (s - sideB) * (s - sideC)) / s);
+
+        *intersectX = (sideC * threePoints[0] + sideA * threePoints[4] + sideB * threePoints[2]) / (sideA + sideB + sideC);
+        *intersectY = (sideC * threePoints[1] + sideA * threePoints[5] + sideB * threePoints[3]) / (sideA + sideB + sideC);
+    }
+
+    // This method calculates the circumcenter coordinates given the sides and semi perimeter
+    void calcCircumcenter(double sideA, double sideB, double sideC, double s, double *intersectX, double *intersectY, double *R, double threePoints[6])
+    {
+        double r = 0.0, perpM1 = 0.0, perpM2 = 0.0, perpB1 = 0.0, perpB2 = 0.0;
+
+        r = sqrt(((s - sideA) * (s - sideB) * (s - sideC)) / s);
+        *R = (sideA * sideB * sideC) / (4 * r * s);
+
+        perpM1 = -1 * pow((threePoints[3] - threePoints[1]) / (threePoints[2] - threePoints[0]), -1);
+        perpB1 = ((threePoints[1] + threePoints[3]) / 2) - (perpM1 * ((threePoints[0] + threePoints[2]) / 2));
+
+        perpM2 = -1 * pow((threePoints[5] - threePoints[1]) / (threePoints[4] - threePoints[0]), -1);
+        perpB2 = ((threePoints[1] + threePoints[5]) / 2) - (perpM2 * ((threePoints[0] + threePoints[4]) / 2));
+
+        if (!isfinite(perpM2))
+        {
+            *intersectX = (threePoints[0] + threePoints[4]) / 2;
+            *intersectY = (perpM1 * *intersectX) + perpB1;
+        }
+        else if (!isfinite(perpM1))
+        {
+            *intersectX = (threePoints[0] + threePoints[2]) / 2;
+            *intersectY = (perpM2 * *intersectX) + perpB2;
+        }
+        else
+        {
+            *intersectX = (perpB2 - perpB1) / (perpM1 - perpM2);
+            *intersectY = (perpM1 * *intersectX) + perpB1;
+        }
+    }
+
+    // This method calculates the centroid of a triangle
+    void calcCentroid(double *intersectX, double *intersectY, double threePoints[6])
+    {
+        *intersectX = (threePoints[0] + threePoints[2] + threePoints[4]) / 3;
+        *intersectY = (threePoints[1] + threePoints[3] + threePoints[5]) / 3;
+    }
+
+    // This method calculates the orthocenter of the triangle
+    void calcOrthocenter(double *intersectX, double *intersectY, double threePoints[6])
+    {
+        double perpM1 = 0.0, perpM2 = 0.0, perpB1 = 0.0, perpB2 = 0.0;
+
+        perpM1 = -1 * pow((threePoints[3] - threePoints[1]) / (threePoints[2] - threePoints[0]), -1);
+        perpB1 = threePoints[5] - (perpM1 * threePoints[4]);
+
+        perpM2 = -1 * pow((threePoints[5] - threePoints[1]) / (threePoints[4] - threePoints[0]), -1);
+        perpB2 = threePoints[3] - (perpM2 * threePoints[2]);
+
+        if (!isfinite(perpM2))
+        {
+            perpM2 = -1 * pow((threePoints[5] - threePoints[3]) / (threePoints[4] - threePoints[2]), -1);
+            perpB2 = threePoints[1] - (perpM2 * threePoints[0]);
+        }
+        else if (!isfinite(perpM1))
+        {
+            perpM1 = -1 * pow((threePoints[5] - threePoints[3]) / (threePoints[4] - threePoints[2]), -1);
+            perpB1 = threePoints[1] - (perpM1 * threePoints[0]);
+        }
+
+        *intersectX = (perpB2 - perpB1) / (perpM1 - perpM2);
+        *intersectY = (perpM1 * *intersectX) + perpB1;
+    }
+
+    // This method calculates the nine point center of a triangle given the sides and semi perimeter
+    void calcNinePointCenter(double sideA, double sideB, double sideC, double s, double *centerX, double *centerY, double threePoints[6])
+    {
+        double orthoCenterX = 0.0, orthoCenterY = 0.0, circumCenterX = 0.0, circumCenterY = 0.0, temp = 0.0;
+
+        calcOrthocenter(&orthoCenterX, &orthoCenterY, threePoints);
+        calcCircumcenter(sideA, sideB, sideC, s, &circumCenterX, &circumCenterY, &temp, threePoints);
+
+        // Find mid points of orthocenter and circumcenter which is the nine point center
+        *centerX = (orthoCenterX + circumCenterX) / 2;
+        *centerY = (orthoCenterY + circumCenterY) / 2;
+    }
+};
+
 // This is a class that can generate a PPM3 file with cool shapes
-class PPMGenerator
+class PPMGenerator : public CoordinateGeometry
 {
 private:
     int image[800][800] = {{0}};
@@ -263,13 +354,13 @@ public:
     void drawTriangle(bool drawInCircle, bool drawCircumCircle, bool drawEulerLine, bool drawNinePoint)
     {
         //         double threePoints[6] = {0};
-        double threePoints[6] = {0.250000, 0.375000, 0.125000, 0.125000, 0.375000, 0.125000};
+        double threePoints[6] = {100, 100, 100, 500, 500, 500};
         int size = (sizeof threePoints / sizeof threePoints[0]); // Get size of array
                                                                  //         generatePoints(size, threePoints);
 
         for (int i = 0; i < size; i++)
         {
-            // threePoints[i] = threePoints[i] / 800;
+            threePoints[i] = threePoints[i] / 800;
             cout << to_string(threePoints[i]) + " ";
         }
         cout << endl;
@@ -377,91 +468,6 @@ public:
         }
     }
 
-    // This method calculates the incenter coordinates given the sides and semi perimeter of the trinagle
-    void calcIncenter(double sideA, double sideB, double sideC, double s, double *intersectX, double *intersectY, double *r, double threePoints[6])
-    {
-        *r = sqrt(((s - sideA) * (s - sideB) * (s - sideC)) / s);
-
-        *intersectX = (sideC * threePoints[0] + sideA * threePoints[4] + sideB * threePoints[2]) / (sideA + sideB + sideC);
-        *intersectY = (sideC * threePoints[1] + sideA * threePoints[5] + sideB * threePoints[3]) / (sideA + sideB + sideC);
-    }
-
-    // This method calculates the circumcenter coordinates given the sides and semi perimeter
-    void calcCircumcenter(double sideA, double sideB, double sideC, double s, double *intersectX, double *intersectY, double *R, double threePoints[6])
-    {
-        double r = 0.0, perpM1 = 0.0, perpM2 = 0.0, perpB1 = 0.0, perpB2 = 0.0;
-
-        r = sqrt(((s - sideA) * (s - sideB) * (s - sideC)) / s);
-        *R = (sideA * sideB * sideC) / (4 * r * s);
-
-        perpM1 = -1 * pow((threePoints[3] - threePoints[1]) / (threePoints[2] - threePoints[0]), -1);
-        perpB1 = ((threePoints[1] + threePoints[3]) / 2) - (perpM1 * ((threePoints[0] + threePoints[2]) / 2));
-
-        perpM2 = -1 * pow((threePoints[5] - threePoints[1]) / (threePoints[4] - threePoints[0]), -1);
-        perpB2 = ((threePoints[1] + threePoints[5]) / 2) - (perpM2 * ((threePoints[0] + threePoints[4]) / 2));
-
-        if (!isfinite(perpM2))
-        {
-            *intersectX = (threePoints[0] + threePoints[4]) / 2;
-            *intersectY = (perpM1 * *intersectX) + perpB1;
-        }
-        else if (!isfinite(perpM1))
-        {
-            *intersectX = (threePoints[0] + threePoints[2]) / 2;
-            *intersectY = (perpM2 * *intersectX) + perpB2;
-        }
-        else
-        {
-            *intersectX = (perpB2 - perpB1) / (perpM1 - perpM2);
-            *intersectY = (perpM1 * *intersectX) + perpB1;
-        }
-    }
-
-    // This method calculates the centroid of a triangle
-    void calcCentroid(double *intersectX, double *intersectY, double threePoints[6])
-    {
-        *intersectX = (threePoints[0] + threePoints[2] + threePoints[4]) / 3;
-        *intersectY = (threePoints[1] + threePoints[3] + threePoints[5]) / 3;
-    }
-
-    // This method calculates the orthocenter of the triangle
-    void calcOrthocenter(double *intersectX, double *intersectY, double threePoints[6])
-    {
-        double perpM1 = 0.0, perpM2 = 0.0, perpB1 = 0.0, perpB2 = 0.0;
-
-        perpM1 = -1 * pow((threePoints[3] - threePoints[1]) / (threePoints[2] - threePoints[0]), -1);
-        perpB1 = threePoints[5] - (perpM1 * threePoints[4]);
-
-        perpM2 = -1 * pow((threePoints[5] - threePoints[1]) / (threePoints[4] - threePoints[0]), -1);
-        perpB2 = threePoints[3] - (perpM2 * threePoints[2]);
-
-        if (!isfinite(perpM2))
-        {
-            perpM2 = -1 * pow((threePoints[5] - threePoints[3]) / (threePoints[4] - threePoints[2]), -1);
-            perpB2 = threePoints[1] - (perpM2 * threePoints[0]);
-        }
-        else if (!isfinite(perpM1))
-        {
-            perpM1 = -1 * pow((threePoints[5] - threePoints[3]) / (threePoints[4] - threePoints[2]), -1);
-            perpB1 = threePoints[1] - (perpM1 * threePoints[0]);
-        }
-
-        *intersectX = (perpB2 - perpB1) / (perpM1 - perpM2);
-        *intersectY = (perpM1 * *intersectX) + perpB1;
-    }
-
-    // This method calculates the nine point center of a triangle given the sides and semi perimeter
-    void calcNinePointCenter(double sideA, double sideB, double sideC, double s, double *centerX, double *centerY, double threePoints[6])
-    {
-        double orthoCenterX = 0.0, orthoCenterY = 0.0, circumCenterX = 0.0, circumCenterY = 0.0, temp = 0.0;
-
-        calcOrthocenter(&orthoCenterX, &orthoCenterY, threePoints);
-        calcCircumcenter(sideA, sideB, sideC, s, &circumCenterX, &circumCenterY, &temp, threePoints);
-
-        // Find mid points of orthocenter and circumcenter which is the nine point center
-        *centerX = (orthoCenterX + circumCenterX) / 2;
-        *centerY = (orthoCenterY + circumCenterY) / 2;
-    }
     // This is the object destructor
     ~PPMGenerator() { cout << "PPMGenerator has been deleted." << endl; }
 };
