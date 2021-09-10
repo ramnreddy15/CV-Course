@@ -3,6 +3,7 @@
 // 09/09/2021
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <random>
 #include <string>
@@ -19,7 +20,7 @@ public:
     {
         if (size % 2 == 0)
         {
-            srand(time(0)); // Generates random seed
+            srand(time(0)+size); // Generates random seed
 
             int distinctPoints = 1;
             bool distinct = true;
@@ -154,22 +155,30 @@ void part1() {
     cout << "end" << endl;
     
     c->generatePoints(2, lastPoint);
-    
-    for(double x:lastPoint) {
-        cout << x << endl;
-    }
-    cout << "ca" << endl;
      cout << (c->calcTriangleArea(points[0], points[1], points[2], points[3],lastPoint[0],lastPoint[1]) + c->calcTriangleArea(points[0], points[1], lastPoint[0], lastPoint[1], points[4], points[5]) +c->calcTriangleArea(lastPoint[0], lastPoint[1], points[2], points[3], points[4], points[5])) << endl;
     
     cout << c->calcTriangleArea(points[0], points[1], points[2], points[3], points[4], points[5]) << endl;
-//     while( +  +  == ) {
-//         cout << "regenerating" << endl;
-//         c->generatePoints(2, lastPoint);
-//     }
     
-    for(double x:lastPoint) {
-        cout << x << endl;
+    while( (c->calcTriangleArea(points[0], points[1], points[2], points[3],lastPoint[0],lastPoint[1]) + 
+            c->calcTriangleArea(points[0], points[1], lastPoint[0], lastPoint[1], points[4], points[5]) + 
+            c->calcTriangleArea(lastPoint[0], lastPoint[1], points[2], points[3], points[4], points[5])) 
+          == 
+          c->calcTriangleArea(points[0], points[1], points[2], points[3], points[4], points[5])) {
+        cout << "regenerating" << endl;
+        c->generatePoints(2, lastPoint);
     }
+    
+    ofstream outfile("points.txt");
+    for (int i =0;i<4;i++)
+    {
+        if(i<3) {
+            outfile << setprecision(17) << "(" << points[i] << "," << points[i+1] << ") ," << endl;
+        } else {
+            outfile << setprecision(17) << "(" << lastPoint[0] << "," << lastPoint[1] << ") ," << endl;
+        }
+    }
+    outfile.close();
+    cout << "Created file." << endl;
 
 }
 
