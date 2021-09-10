@@ -16,6 +16,39 @@ using namespace std;
 class CoordinateGeometry
 {
 public:
+    // This method generates random pixels from an array
+    void generatePoints(int size, double arr[])
+    {
+        if (size % 2 == 0)
+        {
+            srand(time(0)); // Generates random seed
+
+            int distinctPoints = 1;
+            bool distinct = true;
+            while (distinctPoints < (size / 2) + 1) // Gets random points
+            {
+                double x = (float)rand() / RAND_MAX;
+                double y = (float)rand() / RAND_MAX;
+                for (int i = 0; i < distinctPoints; i++)
+                {
+                    if (arr[i] == x && arr[i + 1] == y)
+                    {
+                        distinct = false;
+                    }
+                }
+                if (distinct)
+                {
+                    arr[(distinctPoints * 2) - 2] = x;
+                    arr[(distinctPoints * 2) - 1] = y;
+                    distinctPoints += 1;
+                } else {
+                    distinct == true;
+                }
+            }
+        }
+        cout << "Random points have been generated." << endl;
+    }
+    
     // This method calculates the incenter coordinates given the sides and semi perimeter of the trinagle
     void calcIncenter(double sideA, double sideB, double sideC, double s, double *intersectX, double *intersectY, double *r, double threePoints[6])
     {
@@ -42,18 +75,17 @@ public:
         if (!isfinite(perpM2))
         {
             *intersectX = (threePoints[0] + threePoints[4]) / 2;
-            *intersectY = (perpM1 * *intersectX) + perpB1;
         }
         else if (!isfinite(perpM1))
         {
             *intersectX = (threePoints[0] + threePoints[2]) / 2;
-            *intersectY = (perpM2 * *intersectX) + perpB2;
         }
         else
         {
             *intersectX = (perpB2 - perpB1) / (perpM1 - perpM2);
-            *intersectY = (perpM1 * *intersectX) + perpB1;
+            
         }
+        *intersectY = (perpM1 * *intersectX) + perpB1;
     }
 
     // This method calculates the centroid of a triangle
@@ -145,36 +177,6 @@ public:
         cout << "Created file." << endl;
     }
 
-    // This method generates random pixels from an array
-    void generatePoints(int size, double arr[])
-    {
-        if (size % 2 == 0)
-        {
-            srand(time(0)); // Generates random seed
-
-            int distinctPoints = 1;
-            bool distinct = true;
-            while (distinctPoints < (size / 2) + 1) // Gets random points
-            {
-                double x = (float)rand() / RAND_MAX;
-                double y = (float)rand() / RAND_MAX;
-                for (int i = 0; i < distinctPoints; i++)
-                {
-                    if (arr[i] == x && arr[i + 1] == y)
-                    {
-                        distinct = false;
-                    }
-                }
-                if (distinct)
-                {
-                    arr[(distinctPoints * 2) - 2] = x;
-                    arr[(distinctPoints * 2) - 1] = y;
-                }
-                distinctPoints += 1;
-            }
-        }
-    }
-
     // This method sets a pixel in the array when called
     void setPixel(int x, int y, int shade)
     {
@@ -202,7 +204,7 @@ public:
         }
     }
 
-    // Case 3 and 4 when drawing a line: () or ()
+    // Case 3 and 4 when drawing a line: (x2 > x1 and y2 = y1) or (Case 4: x2 < x1 and y2 = y1)
     void case3and4(int x1, int y, int x2)
     {
         for (int i = x1; i < x2; i++)
@@ -211,7 +213,7 @@ public:
         }
     }
 
-    // Case 5 and 6 when drawing a line: () or ()
+    // Case 5 and 6 when drawing a line: (x2 < x1 and y2 > y1) or ( x2 > x1 and y2 < y1)
     void case5and6(int x1, int y1, int x2, int y2, int changeX, int changeY)
     {
         int j = y1;
@@ -229,7 +231,7 @@ public:
         }
     }
 
-    // Case 7 and 8 when drawing a line: () or ()
+    // Case 7 and 8 when drawing a line: (x2 > x1 and y2 > y1) or (x2 < x1 and y2 < y1)
     void case7and8(int x1, int y1, int x2, int y2, int changeX, int changeY)
     {
         int j = x1;
@@ -247,7 +249,7 @@ public:
         }
     }
 
-    // Case 9 and 10 when drawing a line: () or ()
+    // Case 9 and 10 when drawing a line: (x2 > x1 and y2 < y1) or (x2 < x1 and y2 > y1)
     void case9and10(int x1, int y1, int x2, int y2, int changeX, int changeY)
     {
         int j = x1;
@@ -265,7 +267,7 @@ public:
         }
     }
 
-    // Case 11 and 12 when drawing a line: () or ()
+    // Case 11 and 12 when drawing a line: (x2 < x1 and y2 > y1) or (x2 = x1 and y2 < y1)
     void case11and12(int x, int y1, int y2)
     {
         for (int i = y1; i < y2; i++)
@@ -353,18 +355,18 @@ public:
     // It can also draws the different centers of the triangle + euler line
     void drawTriangle(bool drawInCircle, bool drawCircumCircle, bool drawEulerLine, bool drawNinePoint)
     {
-        //         double threePoints[6] = {0};
-        double threePoints[6] = {100, 100, 100, 500, 500, 500};
-        int size = (sizeof threePoints / sizeof threePoints[0]); // Get size of array
-                                                                 //         generatePoints(size, threePoints);
+        int size = 6; 
+        double threePoints[6] = {0};
+         
+        generatePoints(size, threePoints);                               
 
+        cout << "Points being used are: ";
         for (int i = 0; i < size; i++)
         {
-            threePoints[i] = threePoints[i] / 800;
             cout << to_string(threePoints[i]) + " ";
         }
         cout << endl;
-        cout << "Random points have been generated." << endl;
+        
         bresenhamLine((int)(threePoints[0] * cols), (int)(threePoints[1] * rows), (int)(threePoints[2] * cols), (int)(threePoints[3] * rows));
         cout << "Line 1 has been drawn." << endl;
         bresenhamLine((int)(threePoints[0] * cols), (int)(threePoints[1] * rows), (int)(threePoints[4] * cols), (int)(threePoints[5] * rows));
@@ -464,7 +466,7 @@ public:
             setPixel(centerX + y, centerY + -x, 1);
             setPixel(centerX + -y, centerY + x, 1);
             setPixel(centerX + -y, centerY + -x, 1);
-            y2_new -= (2 * x) - 3;
+            y2_new -= (2 * x)  - 3;
         }
     }
 
