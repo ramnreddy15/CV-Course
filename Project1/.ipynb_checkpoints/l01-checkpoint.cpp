@@ -41,14 +41,16 @@ public:
                     arr[(distinctPoints * 2) - 2] = x;
                     arr[(distinctPoints * 2) - 1] = y;
                     distinctPoints += 1;
-                } else {
+                }
+                else
+                {
                     distinct == true;
                 }
             }
         }
         cout << "Random points have been generated." << endl;
     }
-    
+
     // This method calculates the incenter coordinates given the sides and semi perimeter of the trinagle
     void calcIncenter(double sideA, double sideB, double sideC, double s, double *intersectX, double *intersectY, double *r, double threePoints[6])
     {
@@ -83,7 +85,6 @@ public:
         else
         {
             *intersectX = (perpB2 - perpB1) / (perpM1 - perpM2);
-            
         }
         *intersectY = (perpM1 * *intersectX) + perpB1;
     }
@@ -355,10 +356,10 @@ public:
     // It can also draws the different centers of the triangle + euler line
     void drawTriangle(bool drawInCircle, bool drawCircumCircle, bool drawEulerLine, bool drawNinePoint)
     {
-        int size = 6; 
+        int size = 6;
         double threePoints[6] = {0};
-         
-        generatePoints(size, threePoints);                               
+
+        generatePoints(size, threePoints);
 
         cout << "Points being used are: ";
         for (int i = 0; i < size; i++)
@@ -366,7 +367,7 @@ public:
             cout << to_string(threePoints[i]) + " ";
         }
         cout << endl;
-        
+
         bresenhamLine((int)(threePoints[0] * cols), (int)(threePoints[1] * rows), (int)(threePoints[2] * cols), (int)(threePoints[3] * rows));
         cout << "Line 1 has been drawn." << endl;
         bresenhamLine((int)(threePoints[0] * cols), (int)(threePoints[1] * rows), (int)(threePoints[4] * cols), (int)(threePoints[5] * rows));
@@ -466,7 +467,7 @@ public:
             setPixel(centerX + y, centerY + -x, 1);
             setPixel(centerX + -y, centerY + x, 1);
             setPixel(centerX + -y, centerY + -x, 1);
-            y2_new -= (2 * x)  - 3;
+            y2_new -= (2 * x) - 3;
         }
     }
 
