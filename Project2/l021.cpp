@@ -2,6 +2,8 @@
 // Period 4
 // 09/09/2021
 
+
+/// USE EPSILON OR ERROR VALUE!!!
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -141,23 +143,23 @@ public:
 
 void part1() {
     CoordinateGeometry *c = new CoordinateGeometry();
-    double points[6] = {0};
-    double lastPoint[2] = {0};
+    double points[6] = {0.18161564989165929,0.49650563066499831,0.20331431012909329,0.66115298928800315,0.45457319864497819,0.36802270577105012};
+    double lastPoint[2] = {0.25457319864497819,0.50802270577105012};
     
     
-    while ((points[0]*(points[3]-points[5])) + (points[2]*(points[5]-points[1])) + (points[4]*(points[1]-points[3])) == 0) { // Checks coliniarity
-        c->generatePoints(6, points);  
-    }
+//     while ((points[0]*(points[3]-points[5])) + (points[2]*(points[5]-points[1])) + (points[4]*(points[1]-points[3])) == 0) { // Checks coliniarity
+//         c->generatePoints(6, points);  
+//     }
     
-    for(double x:points) {
-        cout << x << endl;
-    }
-    cout << "end" << endl;
+//     for(double x:points) {
+//         cout << x << endl;
+//     }
+//     cout << "end" << endl;
     
-    c->generatePoints(2, lastPoint);
-     cout << (c->calcTriangleArea(points[0], points[1], points[2], points[3],lastPoint[0],lastPoint[1]) + c->calcTriangleArea(points[0], points[1], lastPoint[0], lastPoint[1], points[4], points[5]) +c->calcTriangleArea(lastPoint[0], lastPoint[1], points[2], points[3], points[4], points[5])) << endl;
+//     c->generatePoints(2, lastPoint);
+//      cout << (c->calcTriangleArea(points[0], points[1], points[2], points[3],lastPoint[0],lastPoint[1]) + c->calcTriangleArea(points[0], points[1], lastPoint[0], lastPoint[1], points[4], points[5]) +c->calcTriangleArea(lastPoint[0], lastPoint[1], points[2], points[3], points[4], points[5])) << endl;
     
-    cout << c->calcTriangleArea(points[0], points[1], points[2], points[3], points[4], points[5]) << endl;
+//     cout << c->calcTriangleArea(points[0], points[1], points[2], points[3], points[4], points[5]) << endl;
     
     while( (c->calcTriangleArea(points[0], points[1], points[2], points[3],lastPoint[0],lastPoint[1]) + 
             c->calcTriangleArea(points[0], points[1], lastPoint[0], lastPoint[1], points[4], points[5]) + 
@@ -172,7 +174,7 @@ void part1() {
     for (int i =0;i<4;i++)
     {
         if(i<3) {
-            outfile << setprecision(17) << "(" << points[i] << "," << points[i+1] << ") ," << endl;
+            outfile << setprecision(17) << "(" << points[i*2] << "," << points[(i*2)+1] << ") ," << endl;
         } else {
             outfile << setprecision(17) << "(" << lastPoint[0] << "," << lastPoint[1] << ") ," << endl;
         }

@@ -134,6 +134,9 @@ public:
         *centerX = (orthoCenterX + circumCenterX) / 2;
         *centerY = (orthoCenterY + circumCenterY) / 2;
     }
+    
+    // This is the object destructor
+    ~CoordinateGeometry() { cout << "CoordinateGeometry has been deleted." << endl; }
 };
 
 // This is a class that can generate a PPM3 file with cool shapes
@@ -472,7 +475,10 @@ public:
     }
 
     // This is the object destructor
-    ~PPMGenerator() { cout << "PPMGenerator has been deleted." << endl; }
+    ~PPMGenerator() { 
+        
+        cout << "PPMGenerator has been deleted." << endl; 
+    }
 };
 
 int main()
