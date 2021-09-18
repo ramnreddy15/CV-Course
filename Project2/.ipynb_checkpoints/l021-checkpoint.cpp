@@ -20,7 +20,7 @@ public:
     {
         if (size % 2 == 0)
         {
-            srand(time(0)+size); // Generates random seed
+            srand(time(0) + size); // Generates random seed
 
             int distinctPoints = 1;
             bool distinct = true;
@@ -40,14 +40,16 @@ public:
                     arr[(distinctPoints * 2) - 2] = x;
                     arr[(distinctPoints * 2) - 1] = y;
                     distinctPoints += 1;
-                } else {
+                }
+                else
+                {
                     distinct == true;
                 }
             }
         }
         cout << "Random points have been generated." << endl;
     }
-    
+
     // This method calculates the incenter coordinates given the sides and semi perimeter of the trinagle
     void calcIncenter(double sideA, double sideB, double sideC, double s, double *intersectX, double *intersectY, double *r, double threePoints[6])
     {
@@ -82,7 +84,6 @@ public:
         else
         {
             *intersectX = (perpB2 - perpB1) / (perpM1 - perpM2);
-            
         }
         *intersectY = (perpM1 * *intersectX) + perpB1;
     }
@@ -132,59 +133,59 @@ public:
         *centerX = (orthoCenterX + circumCenterX) / 2;
         *centerY = (orthoCenterY + circumCenterY) / 2;
     }
-    
+
     // This method calculates and returns a triangle area from three points
-    double calcTriangleArea(double x1, double y1, double x2, double y2, double x3, double y3) {
-        return 0.5*abs((x1*(y2-y3)) + (x2*(y3-y1)) + (x3*(y1-y2)));
+    double calcTriangleArea(double x1, double y1, double x2, double y2, double x3, double y3)
+    {
+        return 0.5 * abs((x1 * (y2 - y3)) + (x2 * (y3 - y1)) + (x3 * (y1 - y2)));
     }
-    
 };
 
-void part1() {
+void part1()
+{
     CoordinateGeometry *c = new CoordinateGeometry();
     double points[6] = {0};
     double lastPoint[2] = {0};
-    double error = 0.00000000000000000000000000000001;
-    
-    
-    while ((points[0]*(points[3]-points[5])) + (points[2]*(points[5]-points[1])) + (points[4]*(points[1]-points[3])) == 0) { // Checks coliniarity
-        c->generatePoints(6, points);  
+    double error = 0.0000000000000000000000000000001;
+
+    while ((points[0] * (points[3] - points[5])) + (points[2] * (points[5] - points[1])) + (points[4] * (points[1] - points[3])) == 0) // Checks coliniarity
+    {
+        c->generatePoints(6, points);
     }
-    
-    for(double x:points) {
-        cout << x << endl;
-    }
-    cout << "end" << endl;
-    
+
     c->generatePoints(2, lastPoint);
 
-    while( abs((c->calcTriangleArea(points[0], points[1], points[2], points[3],lastPoint[0],lastPoint[1]) + 
-            c->calcTriangleArea(points[0], points[1], lastPoint[0], lastPoint[1], points[4], points[5]) + 
-            c->calcTriangleArea(lastPoint[0], lastPoint[1], points[2], points[3], points[4], points[5])) 
-          - 
-          c->calcTriangleArea(points[0], points[1], points[2], points[3], points[4], points[5])) > error) {
+    // Below loop checks the three triangle area between whole triangle
+    while (abs((c->calcTriangleArea(points[0], points[1], points[2], points[3], lastPoint[0], lastPoint[1]) +
+                c->calcTriangleArea(points[0], points[1], lastPoint[0], lastPoint[1], points[4], points[5]) +
+                c->calcTriangleArea(lastPoint[0], lastPoint[1], points[2], points[3], points[4], points[5])) -
+               c->calcTriangleArea(points[0], points[1], points[2], points[3], points[4], points[5])) < error)
+    {
         cout << "regenerating" << endl;
         c->generatePoints(2, lastPoint);
     }
-    
+
     ofstream outfile("points.txt");
-    for (int i =0;i<4;i++)
+    for (int i = 0; i < 4; i++)
     {
-        if(i<3) {
-            outfile << setprecision(17) << "(" << points[i*2] << "," << points[(i*2)+1] << ") ,";
-        } else {
+        if (i < 3)
+        {
+            outfile << setprecision(17) << "(" << points[i * 2] << "," << points[(i * 2) + 1] << ") , ";
+        }
+        else
+        {
             outfile << setprecision(17) << "(" << lastPoint[0] << "," << lastPoint[1] << ")";
         }
     }
     outfile.close();
     cout << "Created file." << endl;
-    
-    delete c;
 
+    delete c;
 }
 
-int main() {
+int main()
+{
     part1();
-   
+
     return 0;
 }

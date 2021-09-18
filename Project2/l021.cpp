@@ -146,25 +146,20 @@ void part1()
     CoordinateGeometry *c = new CoordinateGeometry();
     double points[6] = {0};
     double lastPoint[2] = {0};
-    double error = 0.00000000000000000000000000000001;
+    double error = 0.0000000000000000000000000000001;
 
     while ((points[0] * (points[3] - points[5])) + (points[2] * (points[5] - points[1])) + (points[4] * (points[1] - points[3])) == 0) // Checks coliniarity
     {
         c->generatePoints(6, points);
     }
 
-    for (double x : points)
-    {
-        cout << x << endl;
-    }
-
     c->generatePoints(2, lastPoint);
 
-    // Below loop checks the three triangle area between whol triangle
+    // Below loop checks the three triangle area between whole triangle
     while (abs((c->calcTriangleArea(points[0], points[1], points[2], points[3], lastPoint[0], lastPoint[1]) +
                 c->calcTriangleArea(points[0], points[1], lastPoint[0], lastPoint[1], points[4], points[5]) +
                 c->calcTriangleArea(lastPoint[0], lastPoint[1], points[2], points[3], points[4], points[5])) -
-               c->calcTriangleArea(points[0], points[1], points[2], points[3], points[4], points[5])) > error)
+               c->calcTriangleArea(points[0], points[1], points[2], points[3], points[4], points[5])) < error)
     {
         cout << "regenerating" << endl;
         c->generatePoints(2, lastPoint);
@@ -175,7 +170,7 @@ void part1()
     {
         if (i < 3)
         {
-            outfile << setprecision(17) << "(" << points[i * 2] << "," << points[(i * 2) + 1] << ") ,";
+            outfile << setprecision(17) << "(" << points[i * 2] << "," << points[(i * 2) + 1] << ") , ";
         }
         else
         {
