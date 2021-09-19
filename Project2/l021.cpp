@@ -146,7 +146,7 @@ void part1()
     CoordinateGeometry *c = new CoordinateGeometry();
     double points[6] = {0};
     double lastPoint[2] = {0};
-    double error = 0.0000000000000000000000000000001;
+    double error = 0.00000000000000001;
 
     while ((points[0] * (points[3] - points[5])) + (points[2] * (points[5] - points[1])) + (points[4] * (points[1] - points[3])) == 0) // Checks coliniarity
     {
