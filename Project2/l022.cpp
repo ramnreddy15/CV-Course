@@ -2,190 +2,168 @@
 // Period 4
 // 09/09/2021
 
-
-/// USE EPSILON OR ERROR VALUE!!!
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <random>
 #include <string>
 #include <time.h>
+#include <algorithm>
+#include <limits>
+#include <cstdlib>
+#include <vector>
 
 using namespace std;
 
-// This class has the methods for coordinate geometry
-class CoordinateGeometry
+// This is a point class
+class Point
 {
+private:
+    double x;
+    double y;
+
 public:
-    // This method generates random pixels from an array
-    void generatePoints(int size, double arr[])
+    Point()
     {
-        if (size % 2 == 0)
-        {
-            srand(time(0)+size); // Generates random seed
-
-            int distinctPoints = 1;
-            bool distinct = true;
-            while (distinctPoints < (size / 2) + 1) // Gets random points
-            {
-                double x = (float)rand() / RAND_MAX;
-                double y = (float)rand() / RAND_MAX;
-                for (int i = 0; i < distinctPoints; i++)
-                {
-                    if (arr[i] == x && arr[i + 1] == y)
-                    {
-                        distinct = false;
-                    }
-                }
-                if (distinct)
-                {
-                    arr[(distinctPoints * 2) - 2] = x;
-                    arr[(distinctPoints * 2) - 1] = y;
-                    distinctPoints += 1;
-                } else {
-                    distinct == true;
-                }
-            }
-        }
-        cout << "Random points have been generated." << endl;
+        this->x = 0;
+        this->y = 0;
     }
-    
-    // This method calculates the incenter coordinates given the sides and semi perimeter of the trinagle
-    void calcIncenter(double sideA, double sideB, double sideC, double s, double *intersectX, double *intersectY, double *r, double threePoints[6])
+    Point(double x, double y)
     {
-        *r = sqrt(((s - sideA) * (s - sideB) * (s - sideC)) / s);
-
-        *intersectX = (sideC * threePoints[0] + sideA * threePoints[4] + sideB * threePoints[2]) / (sideA + sideB + sideC);
-        *intersectY = (sideC * threePoints[1] + sideA * threePoints[5] + sideB * threePoints[3]) / (sideA + sideB + sideC);
+        this->x = x;
+        this->y = y;
     }
-
-    // This method calculates the circumcenter coordinates given the sides and semi perimeter
-    void calcCircumcenter(double sideA, double sideB, double sideC, double s, double *intersectX, double *intersectY, double *R, double threePoints[6])
+    double getX()
     {
-        double r = 0.0, perpM1 = 0.0, perpM2 = 0.0, perpB1 = 0.0, perpB2 = 0.0;
+        return x;
+    }
+    double getY()
+    {
+        return y;
+    }
+    void setX(double x)
+    {
+        this->x = x;
+    }
+    void setY(double y)
+    {
+        this->y = y;
+    }
+    double calcDistance(Point pt2)
+    {
+        return sqrt(pow((pt2.getX() - x), 2) + pow((pt2.getY() - y), 2));
+    }
+    string toString()
+    {
+        return "(" + to_string(x) + "," + to_string(y) + ")";
+    }
+};
 
-        r = sqrt(((s - sideA) * (s - sideB) * (s - sideC)) / s);
-        *R = (sideA * sideB * sideC) / (4 * r * s);
+// This is a line class
+class Line
+{
+private:
+    Point pt1;
+    Point pt2;
+    double a;
+    double b;
+    double c;
 
-        perpM1 = -1 * pow((threePoints[3] - threePoints[1]) / (threePoints[2] - threePoints[0]), -1);
-        perpB1 = ((threePoints[1] + threePoints[3]) / 2) - (perpM1 * ((threePoints[0] + threePoints[2]) / 2));
-
-        perpM2 = -1 * pow((threePoints[5] - threePoints[1]) / (threePoints[4] - threePoints[0]), -1);
-        perpB2 = ((threePoints[1] + threePoints[5]) / 2) - (perpM2 * ((threePoints[0] + threePoints[4]) / 2));
-
-        if (!isfinite(perpM2))
+public:
+    Line() {}
+    Line(Point pt1, Point pt2)
+    {
+        this->pt1 = pt1;
+        this->pt2 = pt2;
+        this->a = -1 * (pt2.getY() - pt1.getY());
+        this->b = pt2.getX() - pt1.getX();
+        this->c = a * pt1.getX() + b * pt1.getY();
+    }
+    double getXfromY(double y)
+    {
+        if (b == 0)
         {
-            *intersectX = (threePoints[0] + threePoints[4]) / 2;
+            return pt1.getX();
         }
-        else if (!isfinite(perpM1))
+        else if (a == 0)
         {
-            *intersectX = (threePoints[0] + threePoints[2]) / 2;
+            return -numeric_limits<double>::infinity();
         }
         else
         {
-            *intersectX = (perpB2 - perpB1) / (perpM1 - perpM2);
-            
+            return (c - b * y) / a;
         }
-        *intersectY = (perpM1 * *intersectX) + perpB1;
     }
 
-    // This method calculates the centroid of a triangle
-    void calcCentroid(double *intersectX, double *intersectY, double threePoints[6])
+    double getYfromX(double x)
     {
-        *intersectX = (threePoints[0] + threePoints[2] + threePoints[4]) / 3;
-        *intersectY = (threePoints[1] + threePoints[3] + threePoints[5]) / 3;
-    }
-
-    // This method calculates the orthocenter of the triangle
-    void calcOrthocenter(double *intersectX, double *intersectY, double threePoints[6])
-    {
-        double perpM1 = 0.0, perpM2 = 0.0, perpB1 = 0.0, perpB2 = 0.0;
-
-        perpM1 = -1 * pow((threePoints[3] - threePoints[1]) / (threePoints[2] - threePoints[0]), -1);
-        perpB1 = threePoints[5] - (perpM1 * threePoints[4]);
-
-        perpM2 = -1 * pow((threePoints[5] - threePoints[1]) / (threePoints[4] - threePoints[0]), -1);
-        perpB2 = threePoints[3] - (perpM2 * threePoints[2]);
-
-        if (!isfinite(perpM2))
+        if (a == 0)
         {
-            perpM2 = -1 * pow((threePoints[5] - threePoints[3]) / (threePoints[4] - threePoints[2]), -1);
-            perpB2 = threePoints[1] - (perpM2 * threePoints[0]);
+            return -numeric_limits<double>::infinity();
         }
-        else if (!isfinite(perpM1))
+        else if (b == 0)
         {
-            perpM1 = -1 * pow((threePoints[5] - threePoints[3]) / (threePoints[4] - threePoints[2]), -1);
-            perpB1 = threePoints[1] - (perpM1 * threePoints[0]);
+            return pt1.getY();
         }
-
-        *intersectX = (perpB2 - perpB1) / (perpM1 - perpM2);
-        *intersectY = (perpM1 * *intersectX) + perpB1;
+        else
+        {
+            return (c - a * x) / b;
+        }
     }
 
-    // This method calculates the nine point center of a triangle given the sides and semi perimeter
-    void calcNinePointCenter(double sideA, double sideB, double sideC, double s, double *centerX, double *centerY, double threePoints[6])
+    Point *getIntersection(Line ln2)
     {
-        double orthoCenterX = 0.0, orthoCenterY = 0.0, circumCenterX = 0.0, circumCenterY = 0.0, temp = 0.0;
-
-        calcOrthocenter(&orthoCenterX, &orthoCenterY, threePoints);
-        calcCircumcenter(sideA, sideB, sideC, s, &circumCenterX, &circumCenterY, &temp, threePoints);
-
-        // Find mid points of orthocenter and circumcenter which is the nine point center
-        *centerX = (orthoCenterX + circumCenterX) / 2;
-        *centerY = (orthoCenterY + circumCenterY) / 2;
+        double denominator = a * ln2.getB() - b * ln2.getA();
+        if (denominator == 0)
+        { // No solution or parallel
+            return NULL;
+        }
+        else
+        {
+            return new Point((c * ln2.getB() - b * ln2.getC()) / denominator, (a * ln2.getC() - c * ln2.getA()) / denominator);
+        }
     }
-    
-    double calcTriangleArea(double x1, double y1, double x2, double y2, double x3, double y3) {
-        return 0.5*abs((x1*(y2-y3)) + (x2*(y3-y1)) + (x3*(y1-y2)));
+    Line *getPerpendicular(Point pt3)
+    {
+        if (a == 0)
+        {
+            return new Line(Point(pt3.getX(), getYfromX(pt3.getX())), pt3);
+        }
+        if (b == 0)
+        {
+            return new Line(Point(getXfromY(pt3.getY()), pt3.getY()), pt3);
+        }
+        double slope = b / a;
+        return new Line(Point(pt3.getX() + 1, pt3.getY() + slope), pt3);
     }
-    
+    string toString()
+    {
+        return to_string(a) + "*x + " + to_string(b) + "*y = " + to_string(c);
+    }
+    Point getPt1()
+    {
+        return pt1;
+    }
+    Point getPt2()
+    {
+        return pt2;
+    }
+    double getA()
+    {
+        return a;
+    }
+    double getB()
+    {
+        return b;
+    }
+    double getC()
+    {
+        return c;
+    }
 };
 
-// void part1() {
-//     CoordinateGeometry *c = new CoordinateGeometry();
-//     double points[6] = {0.18161564989165929,0.49650563066499831,0.20331431012909329,0.66115298928800315,0.45457319864497819,0.36802270577105012};
-//     double lastPoint[2] = {0.25457319864497819,0.50802270577105012};
-    
-    
-// //     while ((points[0]*(points[3]-points[5])) + (points[2]*(points[5]-points[1])) + (points[4]*(points[1]-points[3])) == 0) { // Checks coliniarity
-// //         c->generatePoints(6, points);  
-// //     }
-    
-// //     for(double x:points) {
-// //         cout << x << endl;
-// //     }
-// //     cout << "end" << endl;
-    
-// //     c->generatePoints(2, lastPoint);
-// //      cout << (c->calcTriangleArea(points[0], points[1], points[2], points[3],lastPoint[0],lastPoint[1]) + c->calcTriangleArea(points[0], points[1], lastPoint[0], lastPoint[1], points[4], points[5]) +c->calcTriangleArea(lastPoint[0], lastPoint[1], points[2], points[3], points[4], points[5])) << endl;
-    
-// //     cout << c->calcTriangleArea(points[0], points[1], points[2], points[3], points[4], points[5]) << endl;
-    
-//     while( (c->calcTriangleArea(points[0], points[1], points[2], points[3],lastPoint[0],lastPoint[1]) + 
-//             c->calcTriangleArea(points[0], points[1], lastPoint[0], lastPoint[1], points[4], points[5]) + 
-//             c->calcTriangleArea(lastPoint[0], lastPoint[1], points[2], points[3], points[4], points[5])) 
-//           == 
-//           c->calcTriangleArea(points[0], points[1], points[2], points[3], points[4], points[5])) {
-//         cout << "regenerating" << endl;
-//         c->generatePoints(2, lastPoint);
-//     }
-    
-//     ofstream outfile("points.txt");
-//     for (int i =0;i<4;i++)
-//     {
-//         if(i<3) {
-//             outfile << setprecision(17) << "(" << points[i*2] << "," << points[(i*2)+1] << ") ," << endl;
-//         } else {
-//             outfile << setprecision(17) << "(" << lastPoint[0] << "," << lastPoint[1] << ") ," << endl;
-//         }
-//     }
-//     outfile.close();
-//     cout << "Created file." << endl;
-
-// }
-
-// This is a class that can generate a PPM3 file with cool shapes
-class PPMGenerator : public CoordinateGeometry
+// This is a class that can generate a PPM3 file
+class PPMGenerator
 {
 private:
     int image[800][800] = {{0}};
@@ -201,9 +179,9 @@ public:
     }
 
     // This method creates a PPM file from the image array when called
-    void createPPMFile()
+    void createPPMFile(string filename)
     {
-        ofstream outfile("ppmImage.ppm");
+        ofstream outfile(filename);
         outfile << "P3 " + to_string(rows) + " " + to_string(cols) + " 1" << endl; // columns by rows
         for (int i = 0; i < cols; i++)
         {
@@ -231,7 +209,7 @@ public:
     {
         if (x >= 0 && y >= 0 && y < rows && x < cols)
         {
-            image[rows - 1 - y][x] = shade;
+            image[y][x] = shade;
         }
     }
 
@@ -326,8 +304,13 @@ public:
     }
 
     // This method creates a line in the image array when callled
-    void bresenhamLine(int x1, int y1, int x2, int y2)
+    void bresenhamLine(Point point1, Point point2, int scaler)
     {
+        int x1 = (int)(point1.getX() * scaler);
+        int y1 = (int)(point1.getY() * scaler);
+        int x2 = (int)(point2.getX() * scaler);
+        int y2 = (int)(point2.getY() * scaler);
+
         int changeX = abs(x2 - x1);
         int changeY = abs(y2 - y1);
 
@@ -387,7 +370,7 @@ public:
                 cout << "Case 10" << endl;
                 case9and10(x2, y2, x1, y1, changeX, changeY);
             }
-            else if (x2 = x1 && y2 > y1) // Case 11: x2 = x1 and y2 > y1
+            else if (x2 == x1 && y2 > y1) // Case 11: x2 = x1 and y2 > y1
             {
                 cout << "Case 11" << endl;
                 case11and12(x1, y1, y2);
@@ -400,93 +383,18 @@ public:
         }
     }
 
-    // This method generates points for a triangle and then draws it
-    // It can also draws the different centers of the triangle + euler line
-    void drawTriangle(bool drawInCircle, bool drawCircumCircle, bool drawEulerLine, bool drawNinePoint)
+    void screenLine(Point point1, Point point2, int scaler)
     {
-        int size = 6;
-        double threePoints[6] = {0};
-
-        generatePoints(size, threePoints);
-
-        cout << "Points being used are: ";
-        for (int i = 0; i < size; i++)
+        double slope = 0.0, b = 0.0;
+        slope = (point1.getY() - point2.getY()) / (point1.getX() - point2.getX());
+        if (isfinite(slope))
         {
-            cout << to_string(threePoints[i]) + " ";
+            b = point1.getY() - (slope * point1.getX());
+            bresenhamLine(Point((0 - b) / slope, 0), Point((rows - b) / slope, rows), scaler);
         }
-        cout << endl;
-
-        bresenhamLine((int)(threePoints[0] * cols), (int)(threePoints[1] * rows), (int)(threePoints[2] * cols), (int)(threePoints[3] * rows));
-        cout << "Line 1 has been drawn." << endl;
-        bresenhamLine((int)(threePoints[0] * cols), (int)(threePoints[1] * rows), (int)(threePoints[4] * cols), (int)(threePoints[5] * rows));
-        cout << "Line 2 has been drawn." << endl;
-        bresenhamLine((int)(threePoints[2] * cols), (int)(threePoints[3] * rows), (int)(threePoints[4] * cols), (int)(threePoints[5] * rows));
-        cout << "Triangle has been drawn." << endl;
-
-        // Draws the center circles if arguement is true
-        if (drawInCircle == true || drawEulerLine == true || drawCircumCircle == true || drawNinePoint == true)
+        else
         {
-            double sideA = 0.0, sideB = 0.0, sideC = 0.0, s = 0.0;
-
-            sideA = sqrt(pow(threePoints[0] - threePoints[2], 2) + pow(threePoints[1] - threePoints[3], 2)); // AB
-            sideB = sqrt(pow(threePoints[0] - threePoints[4], 2) + pow(threePoints[1] - threePoints[5], 2)); // BC
-            sideC = sqrt(pow(threePoints[2] - threePoints[4], 2) + pow(threePoints[3] - threePoints[5], 2)); // AC
-            s = 0.5 * (sideA + sideB + sideC);
-
-            if (drawInCircle) // Draws the incircle
-            {
-                double r = 0.0, intersectX = 0.0, intersectY = 0.0;
-
-                calcIncenter(sideA, sideB, sideC, s, &intersectX, &intersectY, &r, threePoints);
-
-                drawCircle((int)(intersectX * cols), (int)(intersectY * rows), (int)(r * rows));
-                cout << intersectX * cols << " " << intersectY * rows << " " << r * rows << endl;
-                cout << "Incircle has been drawn" << endl;
-            }
-            if (drawCircumCircle) // Draws the circum circle
-            {
-                double R = 0.0, intersectX = 0.0, intersectY = 0.0;
-
-                calcCircumcenter(sideA, sideB, sideC, s, &intersectX, &intersectY, &R, threePoints);
-
-                drawCircle((int)(intersectX * cols), (int)(intersectY * rows), (int)(R * rows));
-                cout << intersectX * cols << " " << intersectY * rows << " " << R * rows << endl;
-                cout << "Circumcircle has been drawn" << endl;
-            }
-            if (drawEulerLine) // Draws the euler line
-            {
-                double circumX = 0.0, circumY = 0.0, centroidX = 0.0, centroidY = 0.0, slope = 0.0, b = 0.0, temp = 0.0;
-
-                calcCircumcenter(sideA, sideB, sideC, s, &circumX, &circumY, &temp, threePoints);
-                calcCentroid(&centroidX, &centroidY, threePoints);
-
-                slope = (circumY - centroidY) / (circumX - centroidX);
-                if (isfinite(slope))
-                {
-                    b = centroidY - (slope * centroidX);
-                    bresenhamLine((0 - (b * rows)) / slope, 0, (rows - (b * rows)) / slope, rows);
-                    cout << slope << " " << b << endl;
-                }
-                else
-                {
-                    bresenhamLine(circumX * cols, 0, circumX * cols, rows);
-                    cout << "x = " << circumX * rows << endl;
-                }
-                cout << "Euler line has been drawn" << endl;
-            }
-            if (drawNinePoint) // Draws the nine point circle
-            {
-                double centerX = 0.0, centerY = 0.0, r = 0.0;
-
-                r = (sideA * sideB * sideC) / (sqrt((sideA + sideB + sideC) * (sideB + sideC - sideA) * (sideC + sideA - sideB) * (sideA + sideB - sideC)));
-                r = 0.5 * r;
-
-                calcNinePointCenter(sideA, sideB, sideC, s, &centerX, &centerY, threePoints);
-
-                drawCircle((int)(centerX * cols), (int)(centerY * rows), (int)(r * rows));
-                cout << centerX * cols << " " << centerY * rows << " " << r * rows << endl;
-                cout << "Nine point circle has been drawn" << endl;
-            }
+            bresenhamLine(Point(point2.getX() * scaler, 0), Point(point2.getX() * scaler, rows), scaler);
         }
     }
 
@@ -518,38 +426,224 @@ public:
             y2_new -= (2 * x) - 3;
         }
     }
-
-    // This is the object destructor
-    ~PPMGenerator() { 
-        
-        cout << "PPMGenerator has been deleted." << endl; 
-    }
 };
+// This method generates random pixels from an array
+vector<Point> generatePoints(int size, vector<Point> genPoints)
+{
 
-void part2(){
-    PPMGenerator *c = new PPMGenerator();
-    int x = (int)(0.18161564989165929*800);
-    int y =(int)(0.49650563066499831*800);
-    c-> setPixel(x,y,1);
-    c->drawCircle(x,y,2);
-    x=(int)(0.20331431012909329*800);
-    y=(int)(0.66115298928800315*800);
-    c-> setPixel(x,y,1);
-    c->drawCircle(x,y,2);
-    x=(int)(0.45457319864497819*800);
-    y=(int)(0.36802270577105012*800);
-    c-> setPixel(x,y,1);
-    c->drawCircle(x,y,2);
-    x=(int)(0.86330759605700857*800);
-    y=(int)(0.82033753471480453*800);
-    c-> setPixel(x,y,1);
-    c->drawCircle(x,y,2);
-    c->createPPMFile();
-    delete c;
+    if (size % 2 == 0)
+    {
+        double tempPoints[size] = {0};
+        random_device rd;
+        uniform_real_distribution<double> uRD(0.0, 1.0);
+
+        int distinctPoints = 1;
+        bool distinct = true;
+        while (distinctPoints < (size / 2) + 1) // Gets random points
+        {
+            double x = uRD(rd);
+            double y = uRD(rd);
+            for (int i = 0; i < distinctPoints; i++)
+            {
+                if (tempPoints[i] == x && tempPoints[i + 1] == y)
+                {
+                    distinct = false;
+                }
+            }
+            if (distinct == true)
+            {
+                tempPoints[(distinctPoints * 2) - 2] = x;
+                tempPoints[(distinctPoints * 2) - 1] = y;
+                distinctPoints += 1;
+            }
+            else
+            {
+                distinct = true;
+            }
+        }
+        genPoints.clear();
+        for (int i = 0; i < size / 2; i++)
+        {
+            genPoints.push_back(Point(tempPoints[i * 2], tempPoints[i * 2 + 1]));
+        }
+    }
+
+    return genPoints;
+}
+vector<Point> readFile(string file, string delimiter, vector<Point> genPoints)
+{
+    ifstream input(file);
+    string s1 = "";
+    string s2 = "";
+    for (string line; getline(input, line);)
+    {
+        s1 += line;
+    }
+    for (char i : s1)
+    {
+        if (s2.size() == 0 && i != '(')
+        {
+        }
+        else if (i != ')')
+        {
+            s2 += i;
+        }
+        if (i == ')')
+        {
+            int loc = s2.find(delimiter, 0);
+            genPoints.push_back(Point(stod(s2.substr(1, loc - 1)), stod(s2.substr(loc + 1, s2.size()))));
+            s2.erase();
+        }
+    }
+    return genPoints;
 }
 
-int main() {
+void permute(string str, vector<string> *permutations, int l, int r)
+{
+    if (l == r)
+    {
+        permutations->push_back(str);
+    }
+
+    for (int i = l; i <= r; i++)
+    {
+        swap(str[l], str[i]);
+        permute(str, permutations, l + 1, r);
+        swap(str[l], str[i]);
+    }
+}
+
+Point *findE(Point from, Line current, double distance)
+{
+
+    double slope = -1 * current.getA() / current.getB();
+    double times = sqrt(pow(slope, 2) + 1);
+    return new Point(from.getX() + distance / times, from.getY() + slope * (distance / times));
+}
+
+vector<Point> smallestSquare(Point a, Point b, Point c, Point d)
+{
+    vector<Point> genPoints;
+    Line *line1 = new Line(a, c);
+    Line *helperLn = line1->getPerpendicular(b);
+    Point *e = new Point();
+    e = findE(b, *helperLn, c.calcDistance(a));
+    Line *lineE = new Line(*e, d);
+    Line *helperLn1 = lineE->getPerpendicular(a);
+    Line *helperLn2 = lineE->getPerpendicular(c);
+    Line *helperLn3 = helperLn1->getPerpendicular(b);
+    Point *pointA = lineE->getIntersection(*helperLn1);
+    Point *pointB = lineE->getIntersection(*helperLn2);
+    Point *pointC = helperLn3->getIntersection(*helperLn1);
+    Point *pointD = helperLn3->getIntersection(*helperLn2);
+    genPoints.push_back(*pointA);
+    genPoints.push_back(*pointB);
+    genPoints.push_back(*pointC);
+    genPoints.push_back(*pointD);
+    delete line1, delete e, delete lineE, delete helperLn1, delete helperLn2, delete helperLn3, delete pointA, delete pointB, delete pointC, delete pointD;
+    return genPoints;
+}
+
+void part2()
+{
+    PPMGenerator *c = new PPMGenerator();
+    vector<Point> genPoints;
+    genPoints = readFile("points.txt", ",", genPoints);
+    for (Point i : genPoints)
+    {
+        c->drawCircle((int)(i.getX() * 800), (int)(i.getY() * 800), 2);
+    }
+
+    vector<vector<Point>> squares;
+    vector<double> areas;
+    vector<string> *permutations = new vector<string>;
+    permute("1234", permutations, 0, 3);
+    for (string str : *permutations)
+    {
+        vector<Point> genSquare = smallestSquare(genPoints[stoi(str.substr(0, 1)) - 1], genPoints[stoi(str.substr(1, 1)) - 1], genPoints[stoi(str.substr(2, 1)) - 1], genPoints[stoi(str.substr(3, 1)) - 1]);
+        double area = pow(genSquare[0].calcDistance(genSquare[1]), 2);
+        bool isIn = false;
+        for (double sArea : areas)
+        {
+            if (abs(sArea - area) < 1e-10)
+            {
+                isIn = true;
+            }
+        }
+        if (isIn == false)
+        {
+            areas.push_back(area);
+            squares.push_back(genSquare);
+        }
+    }
+    ofstream outfile("output.txt");
+    outfile << setprecision(17) << "(" << genPoints[0].getX() << "," << genPoints[0].getY() << ") ,  (" << genPoints[1].getX() << "," << genPoints[1].getY() << ") ,  (" << genPoints[2].getX() << "," << genPoints[2].getY() << ") ,  (" << genPoints[3].getX() << "," << genPoints[3].getY() << ")" << endl;
+    for (int i = 0; i < 6; i++)
+    {
+        outfile << setprecision(17) << "(" << squares[i][0].getX() << "," << squares[i][0].getY() << ") ,  (" << squares[i][1].getX() << "," << squares[i][1].getY() << ") ,  (" << squares[i][2].getX() << "," << squares[i][2].getY() << ") ,  (" << squares[i][3].getX() << "," << squares[i][3].getY() << ") Area = " << areas[i] << endl;
+    }
+    outfile.close();
+    int min = min_element(areas.begin(), areas.end()) - areas.begin();
+    c->screenLine(squares[min][0], squares[min][1], 800);
+    c->screenLine(squares[min][0], squares[min][2], 800);
+    c->screenLine(squares[min][3], squares[min][1], 800);
+    c->screenLine(squares[min][3], squares[min][2], 800);
+    for (Point p : squares[min])
+    {
+        c->drawCircle((int)(p.getX() * 800), (int)(p.getY() * 800), 5);
+    }
+    c->createPPMFile("output.ppm");
+
+    delete c, delete permutations;
+}
+
+// This method calculates and returns a triangle area from three points
+double calcTriangleArea(double x1, double y1, double x2, double y2, double x3, double y3)
+{
+    return 0.5 * abs((x1 * (y2 - y3)) + (x2 * (y3 - y1)) + (x3 * (y1 - y2)));
+}
+
+void part1()
+{
+    vector<Point> points = {Point(), Point(), Point()};
+    vector<Point> lastPoint = {Point()};
+    double error = 1e-13;
+    while ((points[0].getX() * (points[1].getY() - points[2].getY())) + (points[1].getX() * (points[2].getY() - points[0].getY())) + (points[2].getX() * (points[0].getY() - points[1].getY())) == 0) // Checks coliniarity
+    {
+        points = generatePoints(6, points);
+    }
+
+    lastPoint = generatePoints(2, lastPoint);
+
+    // Below loop checks the three triangle area between whole triangle
+    while (abs((calcTriangleArea(points[0].getX(), points[0].getY(), points[1].getX(), points[1].getY(), lastPoint[0].getX(), lastPoint[0].getY()) +
+                calcTriangleArea(points[0].getX(), points[0].getY(), lastPoint[0].getX(), lastPoint[0].getY(), points[2].getX(), points[2].getY()) +
+                calcTriangleArea(lastPoint[0].getX(), lastPoint[0].getY(), points[1].getX(), points[1].getY(), points[2].getX(), points[2].getY())) -
+               calcTriangleArea(points[0].getX(), points[0].getY(), points[1].getX(), points[1].getY(), points[2].getX(), points[2].getY())) < error)
+    {
+        cout << "regenerating" << endl;
+        lastPoint = generatePoints(2, lastPoint);
+    }
+
+    ofstream outfile("points.txt");
+    for (int i = 0; i < 4; i++)
+    {
+        if (i < 3)
+        {
+            outfile << setprecision(17) << "(" << points[i].getX() << "," << points[i].getY() << ") , ";
+        }
+        else
+        {
+            outfile << setprecision(17) << "(" << lastPoint[0].getX() << "," << lastPoint[0].getY() << ")";
+        }
+    }
+    outfile.close();
+    cout << "Created file." << endl;
+}
+
+int main()
+{
+    //     part1();
     part2();
-   
     return 0;
 }
