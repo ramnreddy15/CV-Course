@@ -74,9 +74,12 @@ public:
     {
         rows = sizeof(image) / sizeof(image[0]);
         cols = sizeof(image) / sizeof(image[1]);
-        for(int i =0;i<800;i++) {
-            for(int j=0; j<800; j++) {
-                for(int c=0;c<3; c++) {
+        for (int i = 0; i < 800; i++)
+        {
+            for (int j = 0; j < 800; j++)
+            {
+                for (int c = 0; c < 3; c++)
+                {
                     image[i][j][c] = 255;
                 }
             }
@@ -121,7 +124,7 @@ public:
 
         for (int i = x1; i < x2; i++)
         {
-            setPixel(i, j, 0,0,0);
+            setPixel(i, j, 0, 0, 0);
             if (error >= 0)
             {
                 j += 1;
@@ -136,7 +139,7 @@ public:
     {
         for (int i = x1; i < x2; i++)
         {
-            setPixel(i, y, 0,0,0);
+            setPixel(i, y, 0, 0, 0);
         }
     }
 
@@ -148,7 +151,7 @@ public:
 
         for (int i = x1; i >= x2; i--)
         {
-            setPixel(i, j, 0,0,0);
+            setPixel(i, j, 0, 0, 0);
             if (error >= 0)
             {
                 j += 1;
@@ -166,7 +169,7 @@ public:
 
         for (int i = y1; i < y2; i++)
         {
-            setPixel(j, i, 0,0,0);
+            setPixel(j, i, 0, 0, 0);
             if (error >= 0)
             {
                 j += 1;
@@ -184,7 +187,7 @@ public:
 
         for (int i = y1; i >= y2; i--)
         {
-            setPixel(j, i, 0,0,0);
+            setPixel(j, i, 0, 0, 0);
             if (error >= 0)
             {
                 j += 1;
@@ -199,7 +202,7 @@ public:
     {
         for (int i = y1; i < y2; i++)
         {
-            setPixel(x, i, 0,0,0);
+            setPixel(x, i, 0, 0, 0);
         }
     }
 
@@ -315,14 +318,14 @@ public:
                 y -= 1;
                 ty -= 2;
             }
-            setPixel(centerX + x, centerY + y, shade[0],shade[1],shade[2]);
-            setPixel(centerX + x, centerY + -y, shade[0],shade[1],shade[2]);
-            setPixel(centerX + -x, centerY + y, shade[0],shade[1],shade[2]);
-            setPixel(centerX + -x, centerY + -y, shade[0],shade[1],shade[2]);
-            setPixel(centerX + y, centerY + x, shade[0],shade[1],shade[2]);
-            setPixel(centerX + y, centerY + -x, shade[0],shade[1],shade[2]);
-            setPixel(centerX + -y, centerY + x, shade[0],shade[1],shade[2]);
-            setPixel(centerX + -y, centerY + -x, shade[0],shade[1],shade[2]);
+            setPixel(centerX + x, centerY + y, shade[0], shade[1], shade[2]);
+            setPixel(centerX + x, centerY + -y, shade[0], shade[1], shade[2]);
+            setPixel(centerX + -x, centerY + y, shade[0], shade[1], shade[2]);
+            setPixel(centerX + -x, centerY + -y, shade[0], shade[1], shade[2]);
+            setPixel(centerX + y, centerY + x, shade[0], shade[1], shade[2]);
+            setPixel(centerX + y, centerY + -x, shade[0], shade[1], shade[2]);
+            setPixel(centerX + -y, centerY + x, shade[0], shade[1], shade[2]);
+            setPixel(centerX + -y, centerY + -x, shade[0], shade[1], shade[2]);
             y2_new -= (2 * x) - 3;
         }
     }
@@ -337,46 +340,54 @@ list<Point> generatePoints(int size, list<Point> genPoints)
     {
         double x = uRD(rd);
         double y = uRD(rd);
-        genPoints.push_back(Point(x,y));
+        genPoints.push_back(Point(x, y));
     }
     return genPoints;
 }
 
-void part1() {
+void part1()
+{
     PPMGenerator *c = new PPMGenerator();
     list<Point> genPoints;
-    genPoints = generatePoints(60,genPoints);
+    genPoints = generatePoints(60, genPoints);
     double min = 1.5; // a little more than 1sqrt2
-    int temp =0, temp1 = 0, point1 = 0, point2=0;
-    
+    int temp = 0, temp1 = 0, point1 = 0, point2 = 0;
+
     ofstream outfile("points.txt");
-    for(list<Point>::iterator itP = genPoints.begin(); itP != genPoints.end(); ++itP){
-        list<Point>::iterator itP2=itP;
-        temp1=temp+1;
-        for(itP2 = ++itP2; itP2 != genPoints.end(); ++itP2) {
+    for (list<Point>::iterator itP = genPoints.begin(); itP != genPoints.end(); ++itP)
+    {
+        list<Point>::iterator itP2 = itP;
+        temp1 = temp + 1;
+        for (itP2 = ++itP2; itP2 != genPoints.end(); ++itP2)
+        {
             double distance = itP->calcDistance(*itP2);
-            if(min>distance) {
+            if (min > distance)
+            {
                 min = distance;
                 point1 = temp;
                 point2 = temp1;
-            } 
+            }
             temp1++;
         }
         temp++;
-        outfile << setprecision(17) << itP->getX() << "  " << itP->getY() << endl;
+        outfile << setprecision(23) << itP->getX() << "  " << itP->getY() << endl;
     }
     outfile.close();
-    
-    temp = 0;        
-    int redShade[3] = {255,0,0};
-    int blackShade[3] = {0,0,0};
-    for(list<Point>::iterator itP = genPoints.begin(); itP != genPoints.end(); ++itP) {
-        if(temp == point1 || temp == point2) {
-            c->drawCircle((int) (itP->getX()*800), (int) (itP->getY()*800),2,redShade);
-            c->drawCircle((int) (itP->getX()*800), (int) (itP->getY()*800),3,redShade);
-        } else {
-            c->drawCircle((int) (itP->getX()*800), (int) (itP->getY()*800),2,blackShade);
-            c->drawCircle((int) (itP->getX()*800), (int) (itP->getY()*800),3,blackShade);
+
+    temp = 0;
+    int redShade[3] = {255, 0, 0};
+    int blackShade[3] = {0, 0, 0};
+    for (list<Point>::iterator itP = genPoints.begin(); itP != genPoints.end(); ++itP)
+    {
+        if (temp == point1 || temp == point2)
+        {
+            c->drawCircle((int)(itP->getX() * 800), (int)(itP->getY() * 800), 2, redShade);
+            c->drawCircle((int)(itP->getX() * 800), (int)(itP->getY() * 800), 3, redShade);
+        }
+        else
+        {
+            c->drawCircle((int)(itP->getX() * 800), (int)(itP->getY() * 800), 2, blackShade);
+            c->drawCircle((int)(itP->getX() * 800), (int)(itP->getY() * 800), 3, blackShade);
         }
         temp++;
     }
@@ -385,7 +396,8 @@ void part1() {
     delete c;
 }
 
-int main() {
+int main()
+{
     part1();
     return 0;
 }
