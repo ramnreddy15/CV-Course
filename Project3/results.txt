@@ -1,8 +1,8 @@
 For method 1
-Points are: (0.003177,0.318397) (0.002338,0.318229) 
-Minimum distance is: 0.000855405 
-Time is: 0.0953272
+Points are: (0.710873,0.459992) (0.710953,0.460582) 
+Minimum distance is: 0.000594478 
+Time is: 0.0952314 seconds
 For method 2
-Points are: (0.002338,0.318229) (0.003177,0.318397) 
-Minimum distance is: 0.000855405 
-Time is: 0.0030967
+Points are: (0.710873,0.459992) (0.710953,0.460582) 
+Minimum distance is: 0.000594478 
+Time is: 0.00343273 seconds

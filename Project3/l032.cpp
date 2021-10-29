@@ -358,17 +358,16 @@ list<Point> generatePoints(int size, list<Point> genPoints)
   return genPoints;
 }
 
-void part1(int numPoints)
+void part1()
 {
   PPMGenerator *c = new PPMGenerator();
   list<Point> genPoints;
-  genPoints = generatePoints(numPoints, genPoints);
+  genPoints = generatePoints(1000, genPoints);
   double min = 1.5; // a little more than 1sqrt2
   int temp = 0, temp1 = 0, point1 = 0, point2 = 0;
 
   auto start = std::chrono::high_resolution_clock::now();
-  for (list<Point>::iterator itP = genPoints.begin();
-       itP != genPoints.end(); ++itP)
+  for (list<Point>::iterator itP = genPoints.begin(); itP != genPoints.end(); ++itP)
   {
     list<Point>::iterator itP2 = itP;
     temp1 = temp + 1;
@@ -401,8 +400,7 @@ void part1(int numPoints)
   temp = 0;
   int redShade[3] = {255, 0, 0};
   int blackShade[3] = {0, 0, 0};
-  for (list<Point>::iterator itP = genPoints.begin();
-       itP != genPoints.end(); ++itP)
+  for (list<Point>::iterator itP = genPoints.begin(); itP != genPoints.end(); ++itP)
   {
     if (temp == point1 || temp == point2)
     {
@@ -441,10 +439,23 @@ void readFile(string file, string delimiter, vector<Point> &genPoints)
     {
       loc = s1.find(delimiter, 0);
     }
-    genPoints.push_back(Point(stod(s1.substr(0, loc - 1)),
-                              stod(s1.substr(loc + delimiter.size(), s1.size()))));
+    genPoints.push_back(Point(stod(s1.substr(0, loc - 1)), stod(s1.substr(loc + delimiter.size(), s1.size()))));
     s1.erase();
   }
+}
+
+void writePoints(int size)
+{
+  random_device rd;
+  ofstream outfile("points.txt");
+  uniform_real_distribution<double> uRD(0.0, 1.0);
+  for (int i = 0; i < size; i++)
+  {
+    double x = uRD(rd);
+    double y = uRD(rd);
+    outfile << fixed << setprecision(23) << x << "  " << y << endl;
+  }
+  outfile.close();
 }
 
 bool compare(Point p1, Point p2)
@@ -452,20 +463,19 @@ bool compare(Point p1, Point p2)
   return (p1.getX() < p2.getX());
 }
 
-double
-minDistance(vector<Point> &points, Point &p1, Point &p2, int low,
-            int high)
+double minDistance(vector<Point> &points, Point &p1, Point &p2, int low, int high)
 {
   double min = 100;
-  for (int i = low; i < high; i++)
+  for (vector<Point>::iterator itP = points.begin() + low; itP != points.begin() + high; ++itP)
   {
-    for (int j = i + 1; j <= high; j++)
+    vector<Point>::iterator itP2 = itP;
+    for (itP2 = ++itP2; itP2 != points.begin() + high; ++itP2)
     {
-      double distance = points[i].calcDistance(points[j]);
+      double distance = itP->calcDistance(*itP2);
       if (distance < min)
       {
-        p1 = points[i];
-        p2 = points[j];
+        p1 = *itP;
+        p2 = *itP2;
         min = distance;
       }
     }
@@ -473,20 +483,19 @@ minDistance(vector<Point> &points, Point &p1, Point &p2, int low,
   return min;
 }
 
-double
-minDistanceStrip(vector<Point> &points, Point &p1, Point &p2, int low,
-                 int middle, int high)
+double minDistanceStrip(vector<Point> &points, Point &p1, Point &p2, int low, int middle, int high)
 {
   double min = 100;
-  for (int i = low; i < middle; i++)
+  for (vector<Point>::iterator itP = points.begin() + low; itP != points.begin() + middle; ++itP)
   {
-    for (int j = middle; j <= high; j++)
+    vector<Point>::iterator itP2 = points.begin() + middle;
+    for (itP2 = ++itP2; itP2 != points.begin() + high + 1; ++itP2)
     {
-      double distance = points[i].calcDistance(points[j]);
+      double distance = itP->calcDistance(*itP2);
       if (distance < min)
       {
-        p1 = points[i];
-        p2 = points[j];
+        p1 = *itP;
+        p2 = *itP2;
         min = distance;
       }
     }
@@ -494,9 +503,7 @@ minDistanceStrip(vector<Point> &points, Point &p1, Point &p2, int low,
   return min;
 }
 
-double
-minFromStrip(vector<Point> &points, Point &p1, Point &p2, double middle,
-             double minDistanceP, int lowA, int highA)
+double minFromStrip(vector<Point> &points, Point &p1, Point &p2, double middle, double minDistanceP, int lowA, int highA)
 {
   int low = -1, high = -1, middleL = floor(middle), middleH = ceil(middle), i = 0;
   double strip = (points[middleH].getX() + points[middleL].getX()) / 2;
@@ -539,9 +546,7 @@ minFromStrip(vector<Point> &points, Point &p1, Point &p2, double middle,
   }
 }
 
-double
-recursiveMinDistanceFind(vector<Point> &points, Point &p1, Point &p2,
-                         int low, int high)
+double recursiveMinDistanceFind(vector<Point> &points, Point &p1, Point &p2, int low, int high)
 {
   int difference = (high - low) + 1;
   if (difference > 3)
@@ -551,14 +556,11 @@ recursiveMinDistanceFind(vector<Point> &points, Point &p1, Point &p2,
     Point *p4 = new Point(0, 0);
     Point *p5 = new Point(0, 0);
     Point *p6 = new Point(0, 0);
-    double distance1 =
-        recursiveMinDistanceFind(points, p1, p2, low, middle);
-    double distance2 =
-        recursiveMinDistanceFind(points, *p5, *p6, middle + 1, high);
+    double distance1 = recursiveMinDistanceFind(points, p1, p2, low, middle);
+    double distance2 = recursiveMinDistanceFind(points, *p5, *p6, middle + 1, high);
     if (distance1 < distance2)
     {
-      double distance3 =
-          minFromStrip(points, *p3, *p4, (low + high) / 2, distance1, low, high);
+      double distance3 = minFromStrip(points, *p3, *p4, (low + high) / 2, distance1, low, high);
       if (distance3 < distance1)
       {
         p1 = *p3;
@@ -611,9 +613,7 @@ void part2()
   sort(genPoints->begin(), genPoints->end(), compare);
   Point *p1 = new Point(0, 0);
   Point *p2 = new Point(5, 5);
-  double distance =
-      recursiveMinDistanceFind(*genPoints, *p1, *p2, 0,
-                               genPoints->size() - 1);
+  double distance = recursiveMinDistanceFind(*genPoints, *p1, *p2, 0, genPoints->size() - 1);
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<float> duration = end - start;
   time2 = duration.count();
@@ -624,55 +624,13 @@ void part2()
   delete c, p1, p2, genPoints;
 }
 
-void writePoints(int size)
-{
-  random_device rd;
-  ofstream outfile("points.txt");
-  uniform_real_distribution<double> uRD(0.0, 1.0);
-  for (int i = 0; i < size; i++)
-  {
-    double x = uRD(rd);
-    double y = uRD(rd);
-    outfile << fixed << setprecision(23) << x << "  " << y << endl;
-  }
-  outfile.close();
-}
-
-void logData(int minNodes, int maxNodes, int avgCase, int multiplier)
-{
-  ofstream outfile("log.csv");
-  outfile << "Number of Nodes,Part 1,Part 2\n";
-  double avgTime1 = 0, avgTime2 = 0;
-  for (int i = minNodes; i < maxNodes; i = i * multiplier)
-  {
-    for (int j = 0; j < avgCase; j++)
-    {
-      if (i < 10000)
-      {
-        part1(i);
-        avgTime1 += time1;
-      }
-      else
-      {
-        writePoints(i);
-      }
-      part2();
-      avgTime2 += time2;
-    }
-    outfile << fixed << setprecision(10) << i << "," << avgTime1 / 3 << "," << avgTime2 / 3 << "\n";
-    avgTime1 = 0;
-    avgTime2 = 0;
-  }
-  outfile.close();
-}
-
 int main()
 {
   ofstream outfile("results.txt");
-  part1(1000);
+  part1();
   part2();
-  outfile << "For method 1\nPoints are: " << p1M1.toString() << " " << p2M1.toString() << " \nMinimum distance is: " << min1 << " \nTime is: " << time1 << endl;
-  outfile << "For method 2\nPoints are: " << p1M2.toString() << " " << p2M2.toString() << " \nMinimum distance is: " << min2 << " \nTime is: " << time2 << endl;
+  outfile << "For method 1\nPoints are: " << p1M1.toString() << " " << p2M1.toString() << " \nMinimum distance is: " << min1 << " \nTime is: " << time1 << " seconds" <<  endl;
+  outfile << "For method 2\nPoints are: " << p1M2.toString() << " " << p2M2.toString() << " \nMinimum distance is: " << min2 << " \nTime is: " << time2 << " seconds" << endl;
   outfile.close();
 
   return 0;
