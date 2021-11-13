@@ -57,7 +57,7 @@ public:
   string toString()
   {
     ostringstream temp;
-    temp <<fixed << setprecision(24) << "(" << x << "," << y << ")";
+    temp << fixed << setprecision(24) << "(" << x << "," << y << ")";
     return temp.str();
   }
 };
@@ -637,7 +637,7 @@ double minDistanceP3(vector<Point> &points, Point &p1, Point &p2)
   for (vector<Point>::iterator itP = points.begin(); itP != points.end(); ++itP)
   {
     vector<Point>::iterator itP2 = itP;
-    vector<Point>::iterator temp = ((itP2 + 15)<points.end()) ? itP2 + 15 : points.end(); // can change to 7 without repercussions
+    vector<Point>::iterator temp = ((itP2 + 15) < points.end()) ? itP2 + 15 : points.end(); // can change to 7 without repercussions
     for (itP2 = ++itP2; itP2 != temp; ++itP2)
     {
       double distance = itP->calcDistance(*itP2);
@@ -685,13 +685,14 @@ double minFromStripP3(vector<Point> &points, Point &p1, Point &p2, double middle
     high = highA;
   }
 
-  vector<Point> *sortY  = new vector<Point>;
-  for(i = low; i<=high; i++) {
-      sortY->push_back(points[i]);
+  vector<Point> *sortY = new vector<Point>;
+  for (i = low; i <= high; i++)
+  {
+    sortY->push_back(points[i]);
   }
-    
+
   sort(sortY->begin(), sortY->end(), compareY);
-  
+
   return minDistanceP3(*sortY, p1, p2);
 }
 
@@ -782,7 +783,7 @@ void generatePointstoFile(int amount, string place)
   {
     double x = uRD(rd);
     double y = uRD(rd);
-    outfile << setprecision(23) << x << "  "<< y<< endl;
+    outfile << setprecision(23) << x << "  " << y << endl;
   }
   outfile.close();
 }
@@ -791,15 +792,14 @@ int main()
 {
   generatePointstoFile(100000, "points.txt");
   ofstream outfile("results.txt");
-//   part1();
+  //   part1();
   part2();
   part3();
-//   outfile << "For method 1\nPoints are: " << p1M1.toString() << " " << p2M1.toString() << " \nMinimum distance is: " << min1 << " \nTime is: " << time1 << " seconds" <<  endl;
+  //   outfile << "For method 1\nPoints are: " << p1M1.toString() << " " << p2M1.toString() << " \nMinimum distance is: " << min1 << " \nTime is: " << time1 << " seconds" <<  endl;
   cout << "For method 2\nPoints are: " << p1M2.toString() << " " << p2M2.toString() << " \nMinimum distance is: " << min2 << " \nTime is: " << time2 << " seconds" << endl;
-  cout << "For method 3\nPoints are: " << p1M3.toString() << " " << p2M3.toString() << " \nMinimum distance is: " << min3 << " \nTime is: " << time3 << " seconds" <<  endl;outfile << "For method 2\nPoints are: " << p1M2.toString() << " " << p2M2.toString() << " \nMinimum distance is: " << min2 << " \nTime is: " << time2 << " seconds" << endl;
-  outfile << "For method 3\nPoints are: " << p1M3.toString() << " " << p2M3.toString() << " \nMinimum distance is: " << min3 << " \nTime is: " << time3 << " seconds" <<  endl;
+  cout << "For method 3\nPoints are: " << p1M3.toString() << " " << p2M3.toString() << " \nMinimum distance is: " << min3 << " \nTime is: " << time3 << " seconds" << endl;
   outfile << "For method 2\nPoints are: " << p1M2.toString() << " " << p2M2.toString() << " \nMinimum distance is: " << min2 << " \nTime is: " << time2 << " seconds" << endl;
-  outfile << "For method 3\nPoints are: " << p1M3.toString() << " " << p2M3.toString() << " \nMinimum distance is: " << min3 << " \nTime is: " << time3 << " seconds" <<  endl;
+  outfile << "For method 3\nPoints are: " << p1M3.toString() << " " << p2M3.toString() << " \nMinimum distance is: " << min3 << " \nTime is: " << time3 << " seconds" << endl;
   outfile.close();
 
   return 0;
