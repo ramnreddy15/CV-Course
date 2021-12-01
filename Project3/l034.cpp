@@ -61,16 +61,13 @@ public:
     temp << fixed << setprecision(24) << "(" << x << "," << y << ")";
     return temp.str();
   }
-
 };
 
 class SubSquare
 {
 
-
-
 public:
-      unsigned long long row;
+  unsigned long long row;
   unsigned long long col;
   SubSquare()
   {
@@ -104,15 +101,14 @@ public:
     temp << "(" << col << "," << row << ")";
     return temp.str();
   }
-  bool operator==(const SubSquare& s) const
+  bool operator==(const SubSquare &s) const
   {
-     return row == s.row && col == s.col;
+    return row == s.row && col == s.col;
   }
-  bool operator<(const SubSquare& s) const
+  bool operator<(const SubSquare &s) const
   {
-     return row < s.row;
+    return row < s.row;
   }
-
 };
 
 // This is a class that can generate a PPM3 file
@@ -845,78 +841,94 @@ void generatePointstoFile(int amount, string place)
   outfile.close();
 }
 
-void knuthShuffle(vector<Point> &points) {
-    random_device rd;
-    for(long unsigned int i=0;i<points.size();i++) {
-        uniform_int_distribution<int> uID(i, points.size()-1);
-        int place = uID(rd);
-        Point temp = points[place];
-        points[place] = points[i];
-        points[i] = temp;
-    }
+void knuthShuffle(vector<Point> &points)
+{
+  random_device rd;
+  for (long unsigned int i = 0; i < points.size(); i++)
+  {
+    uniform_int_distribution<int> uID(i, points.size() - 1);
+    int place = uID(rd);
+    Point temp = points[place];
+    points[place] = points[i];
+    points[i] = temp;
+  }
 }
-class hashPair {
+class hashPair
+{
 public:
-    size_t operator()(const SubSquare p) const
-    {
-        return p.row + p.col;
-    }
+  size_t operator()(const SubSquare p) const
+  {
+    return p.row + p.col;
+  }
 };
 
-void minDistanceFindP4(vector<Point> &points) {
-  if(points.size() ==2) {
-      min4 = points[0].calcDistance(points[1]);
-      p1M4 = points[0];
-      p2M4 = points[1];
-  } else {
-      double minTemp, calcDist;
-      unsigned long long locX, locY, startX, startY, changeLong, tempX, tempY;
-      unordered_map<SubSquare, Point*, hashPair> pointMap;
-      double distance = points[0].calcDistance(points[1]);
-      double change = distance /2;
-      pointMap[SubSquare((unsigned long long)(points[0].getX()/change), (unsigned long long)(points[0].getY()/change))] = &points[0]; 
-      pointMap[SubSquare((unsigned long long)(points[1].getX()/change), (unsigned long long)(points[1].getY()/change))] = &points[1];
-      p1M4 = points[0];
-      p2M4 = points[1];
-      for(long unsigned int i =2; i<points.size(); i++) {
-          minTemp = distance;
-          changeLong = (unsigned long long)(change);
-          locX = (unsigned long long)(points[i].getX()/change);
-          locY = (unsigned long long)(points[i].getY()/change);
-          startX = locX - 2;
-          startY = locY - 2;
-          for(long unsigned int j =0; j<5; j++) {
-              for(int k=0;k<5;k++) {
-                  tempX = startX+j;
-                  tempY = startY+k;
-                  SubSquare tempSquare = SubSquare(tempX, tempY); 
-                  if(pointMap.find(tempSquare) != pointMap.end())  {
-                      calcDist = pointMap[tempSquare]->calcDistance(points[i]);
-                      if(calcDist < minTemp) {
-                          minTemp = calcDist;
-                          p1M4 = points[i];
-                          p2M4 = *pointMap[tempSquare];
-                      }
-                  }
-              }
-          }
-          if(minTemp < distance) {
-            pointMap.clear();
-            distance = minTemp;
-            change = distance/2;
-            for(long unsigned int j =0; j<=i;j++) {
-                pointMap[SubSquare((unsigned long long)(points[j].getX()/change), (unsigned long long)(points[j].getY()/change))] = &points[j];
+void minDistanceFindP4(vector<Point> &points)
+{
+  if (points.size() == 2)
+  {
+    min4 = points[0].calcDistance(points[1]);
+    p1M4 = points[0];
+    p2M4 = points[1];
+  }
+  else
+  {
+    double minTemp, calcDist;
+    unsigned long long locX, locY, startX, startY, changeLong, tempX, tempY;
+    unordered_map<SubSquare, Point *, hashPair> pointMap;
+    double distance = points[0].calcDistance(points[1]);
+    double change = distance / 2;
+    pointMap[SubSquare((unsigned long long)(points[0].getX() / change), (unsigned long long)(points[0].getY() / change))] = &points[0];
+    pointMap[SubSquare((unsigned long long)(points[1].getX() / change), (unsigned long long)(points[1].getY() / change))] = &points[1];
+    p1M4 = points[0];
+    p2M4 = points[1];
+    for (long unsigned int i = 2; i < points.size(); i++)
+    {
+      minTemp = distance;
+      changeLong = (unsigned long long)(change);
+      locX = (unsigned long long)(points[i].getX() / change);
+      locY = (unsigned long long)(points[i].getY() / change);
+      startX = locX - 2;
+      startY = locY - 2;
+      for (long unsigned int j = 0; j < 5; j++)
+      {
+        for (int k = 0; k < 5; k++)
+        {
+          tempX = startX + j;
+          tempY = startY + k;
+          SubSquare tempSquare = SubSquare(tempX, tempY);
+          if (pointMap.find(tempSquare) != pointMap.end())
+          {
+            calcDist = pointMap[tempSquare]->calcDistance(points[i]);
+            if (calcDist < minTemp)
+            {
+              minTemp = calcDist;
+              p1M4 = points[i];
+              p2M4 = *pointMap[tempSquare];
             }
-              
-          } else {
-              pointMap[SubSquare(locX, locY)] = &points[i];
           }
+        }
       }
-     min4 = distance;
+      if (minTemp < distance)
+      {
+        pointMap.clear();
+        distance = minTemp;
+        change = distance / 2;
+        for (long unsigned int j = 0; j <= i; j++)
+        {
+          pointMap[SubSquare((unsigned long long)(points[j].getX() / change), (unsigned long long)(points[j].getY() / change))] = &points[j];
+        }
+      }
+      else
+      {
+        pointMap[SubSquare(locX, locY)] = &points[i];
+      }
+    }
+    min4 = distance;
   }
 }
 
-void part4() {
+void part4()
+{
   vector<Point> *genPoints = new vector<Point>;
   readFile("points.txt", "  ", *genPoints);
   auto start = std::chrono::high_resolution_clock::now();
@@ -930,13 +942,13 @@ void part4() {
 int main()
 {
   ofstream outfile("results.txt");
-//   part1();
-//   part2();
+  //   part1();
+  //   part2();
   part3();
   part4();
 
-cout << "For method 3\nPoints are: " << p1M3.toString() << " " << p2M3.toString() << " \nMinimum distance is: " << min3 << " \nTime is: " << time3 << " seconds" << endl;
-cout << "For method 4\nPoints are: " << p1M4.toString() << " " << p2M4.toString() << " \nMinimum distance is: " << min4 << " \nTime is: " << time4 << " seconds" << endl;
+  cout << "For method 3\nPoints are: " << p1M3.toString() << " " << p2M3.toString() << " \nMinimum distance is: " << min3 << " \nTime is: " << time3 << " seconds" << endl;
+  cout << "For method 4\nPoints are: " << p1M4.toString() << " " << p2M4.toString() << " \nMinimum distance is: " << min4 << " \nTime is: " << time4 << " seconds" << endl;
   outfile << "For method 3\nPoints are: " << p1M3.toString() << " " << p2M3.toString() << " \nMinimum distance is: " << min3 << " \nTime is: " << time3 << " seconds" << endl;
   outfile << "For method 4\nPoints are: " << p1M4.toString() << " " << p2M4.toString() << " \nMinimum distance is: " << min4 << " \nTime is: " << time4 << " seconds" << endl;
   outfile.close();
