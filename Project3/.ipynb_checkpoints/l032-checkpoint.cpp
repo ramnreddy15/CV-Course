@@ -627,7 +627,7 @@ void part2()
 int main()
 {
   ofstream outfile("results.txt");
-  part1();
+//   part1();
   part2();
   outfile << "For method 1\nPoints are: " << p1M1.toString() << " " << p2M1.toString() << " \nMinimum distance is: " << min1 << " \nTime is: " << time1 << " seconds" <<  endl;
   outfile << "For method 2\nPoints are: " << p1M2.toString() << " " << p2M2.toString() << " \nMinimum distance is: " << min2 << " \nTime is: " << time2 << " seconds" << endl;

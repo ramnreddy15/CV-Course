@@ -790,7 +790,7 @@ void generatePointstoFile(int amount, string place)
 
 int main()
 {
-  generatePointstoFile(100000, "points.txt");
+//   generatePointstoFile(100000, "points.txt");
   ofstream outfile("results.txt");
   //   part1();
   part2();

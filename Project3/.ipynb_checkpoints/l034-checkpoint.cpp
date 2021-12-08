@@ -55,22 +55,23 @@ public:
   {
     return sqrt(pow((pt2.getX() - x), 2) + pow((pt2.getY() - y), 2));
   }
+  double calcDistanceNS(Point pt2)
+  {
+    return pow((pt2.getX() - x), 2) + pow((pt2.getY() - y), 2);
+  }
   string toString()
   {
     ostringstream temp;
-    temp << fixed << setprecision(24) << "(" << x << "," << y << ")";
+    temp << fixed << setprecision(23) << "(" << x << "," << y << ")";
     return temp.str();
   }
-
 };
 
 class SubSquare
 {
 
-
-
 public:
-      unsigned long long row;
+  unsigned long long row;
   unsigned long long col;
   SubSquare()
   {
@@ -104,15 +105,14 @@ public:
     temp << "(" << col << "," << row << ")";
     return temp.str();
   }
-  bool operator==(const SubSquare& s) const
+  bool operator==(const SubSquare &s) const
   {
-     return row == s.row && col == s.col;
+    return row == s.row && col == s.col;
   }
-  bool operator<(const SubSquare& s) const
+  bool operator<(const SubSquare &s) const
   {
-     return row < s.row;
+    return row < s.row;
   }
-
 };
 
 // This is a class that can generate a PPM3 file
@@ -417,75 +417,6 @@ list<Point> generatePoints(int size, list<Point> genPoints)
   return genPoints;
 }
 
-// void part1()
-// {
-//   PPMGenerator *c = new PPMGenerator();
-//   list<Point> genPoints;
-//   genPoints = generatePoints(1000, genPoints);
-//   double min = 1.5; // a little more than 1sqrt2
-//   int temp = 0, temp1 = 0, point1 = 0, point2 = 0;
-
-//   auto start = std::chrono::high_resolution_clock::now();
-//   for (list<Point>::iterator itP = genPoints.begin(); itP != genPoints.end(); ++itP)
-//   {
-//     list<Point>::iterator itP2 = itP;
-//     temp1 = temp + 1;
-//     for (itP2 = ++itP2; itP2 != genPoints.end(); ++itP2)
-//     {
-//       double distance = itP->calcDistance(*itP2);
-//       if (min > distance)
-//       {
-//         min = distance;
-//         point1 = temp;
-//         point2 = temp1;
-//       }
-//       temp1++;
-//     }
-//     temp++;
-//   }
-//   auto end = std::chrono::high_resolution_clock::now();
-//   std::chrono::duration<float> duration = end - start;
-
-//   time1 = duration.count();
-//   min1 = min;
-
-//   ofstream outfile("points.txt");
-//   for (Point p : genPoints)
-//   {
-//     outfile << fixed << setprecision(23) << p.getX() << "  " << p.getY() << endl;
-//   }
-//   outfile.close();
-
-//   temp = 0;
-//   int redShade[3] = {255, 0, 0};
-//   int blackShade[3] = {0, 0, 0};
-//   for (list<Point>::iterator itP = genPoints.begin(); itP != genPoints.end(); ++itP)
-//   {
-//     if (temp == point1 || temp == point2)
-//     {
-//       if (temp == point1)
-//       {
-//         p1M1 = *itP;
-//       }
-//       else
-//       {
-//         p2M1 = *itP;
-//       }
-//       c->drawCircle((int)(itP->getX() * 800), (int)(itP->getY() * 800), 2, redShade);
-//       c->drawCircle((int)(itP->getX() * 800), (int)(itP->getY() * 800), 3, redShade);
-//     }
-//     else
-//     {
-//       c->drawCircle((int)(itP->getX() * 800), (int)(itP->getY() * 800), 2, blackShade);
-//       c->drawCircle((int)(itP->getX() * 800), (int)(itP->getY() * 800), 3, blackShade);
-//     }
-//     temp++;
-//   }
-//   c->createPPMFile("points.ppm");
-
-//   delete c;
-// }
-
 void readFile(string file, string delimiter, vector<Point> &genPoints)
 {
   ifstream input(file);
@@ -546,147 +477,6 @@ double minDistance(vector<Point> &points, Point &p1, Point &p2, int low, int hig
   }
   return min;
 }
-
-// double minDistanceStrip(vector<Point> &points, Point &p1, Point &p2, int low, int middle, int high)
-// {
-//   double min = 100;
-//   for (vector<Point>::iterator itP = points.begin() + low; itP != points.begin() + middle; ++itP)
-//   {
-//     vector<Point>::iterator itP2 = points.begin() + middle;
-//     for (itP2 = ++itP2; itP2 != points.begin() + high + 1; ++itP2)
-//     {
-//       double distance = itP->calcDistance(*itP2);
-//       if (distance < min)
-//       {
-//         p1 = *itP;
-//         p2 = *itP2;
-//         min = distance;
-//       }
-//     }
-//   }
-//   return min;
-// }
-
-// double minFromStrip(vector<Point> &points, Point &p1, Point &p2, double middle, double minDistanceP, int lowA, int highA)
-// {
-//   int low = -1, high = -1, middleL = floor(middle), middleH = ceil(middle), i = 0;
-//   double strip = (points[middleH].getX() + points[middleL].getX()) / 2;
-//   double lowX = strip - minDistanceP;
-//   double highX = strip + minDistanceP;
-//   while (low == -1 && middleL - i >= lowA)
-//   {
-
-//     if (lowX > points[middleL - i].getX())
-//     {
-//       low = middleL - i;
-//     }
-//     i++;
-//   }
-//   if (low == -1)
-//   {
-//     low = lowA;
-//   }
-//   i = 0;
-//   while (high == -1 && middleH + i <= highA)
-//   {
-//     if (highX < points[middleH + i].getX())
-//     {
-//       high = middleH + i;
-//     }
-//     i++;
-//   }
-//   if (high == -1)
-//   {
-//     high = highA;
-//   }
-
-//   if (middleL == middleH)
-//   {
-//     return minDistance(points, p1, p2, low, high);
-//   }
-//   else
-//   {
-//     return minDistanceStrip(points, p1, p2, low, middleH, high);
-//   }
-// }
-
-// double recursiveMinDistanceFind(vector<Point> &points, Point &p1, Point &p2, int low, int high)
-// {
-//   int difference = (high - low) + 1;
-//   if (difference > 3)
-//   {
-//     double middle = ((double)(low + high)) / 2;
-//     Point *p3 = new Point(0, 0);
-//     Point *p4 = new Point(0, 0);
-//     Point *p5 = new Point(0, 0);
-//     Point *p6 = new Point(0, 0);
-//     double distance1 = recursiveMinDistanceFind(points, p1, p2, low, middle);
-//     double distance2 = recursiveMinDistanceFind(points, *p5, *p6, middle + 1, high);
-//     if (distance1 < distance2)
-//     {
-//       double distance3 = minFromStrip(points, *p3, *p4, (low + high) / 2, distance1, low, high);
-//       if (distance3 < distance1)
-//       {
-//         p1 = *p3;
-//         p2 = *p4;
-//         return distance3;
-//       }
-//       else
-//       {
-//         return distance1;
-//       }
-//     }
-//     else
-//     {
-//       double distance3 =
-//           minFromStrip(points, *p3, *p4, (low + high) / 2, distance2, low, high);
-//       if (distance3 < distance2)
-//       {
-//         p1 = *p3;
-//         p2 = *p4;
-//         return distance3;
-//       }
-//       else
-//       {
-//         p1 = *p5;
-//         p2 = *p6;
-//         return distance2;
-//       }
-//     }
-//     delete p3, p4, p5, p6;
-//   }
-//   else if (difference > 2)
-//   {
-//     return minDistance(points, p1, p2, low, high);
-//   }
-//   else
-//   {
-//     p1 = points[low];
-//     p2 = points[high];
-//     return points[low].calcDistance(points[high]);
-//   }
-// }
-
-// void part2()
-// {
-//   PPMGenerator *c = new PPMGenerator();
-//   vector<Point> *genPoints = new vector<Point>;
-//   readFile("points.txt", "  ", *genPoints);
-
-//   auto start = std::chrono::high_resolution_clock::now();
-//   sort(genPoints->begin(), genPoints->end(), compareX);
-//   Point *p1 = new Point(0, 0);
-//   Point *p2 = new Point(5, 5);
-//   double distance = recursiveMinDistanceFind(*genPoints, *p1, *p2, 0, genPoints->size() - 1);
-//   auto end = std::chrono::high_resolution_clock::now();
-//   std::chrono::duration<float> duration = end - start;
-//   time2 = duration.count();
-//   p1M2 = *p1;
-//   p2M2 = *p2;
-//   min2 = distance;
-
-//   delete c, p1, p2, genPoints;
-// }
 
 double minDistanceP3(vector<Point> &points, Point &p1, Point &p2)
 {
@@ -812,7 +602,6 @@ double recursiveMinDistanceFindP3(vector<Point> &points, Point &p1, Point &p2, i
 
 void part3()
 {
-  PPMGenerator *c = new PPMGenerator();
   vector<Point> *genPoints = new vector<Point>;
   readFile("points.txt", "  ", *genPoints);
 
@@ -828,7 +617,7 @@ void part3()
   p2M3 = *p2;
   min3 = distance;
 
-  delete c, p1, p2, genPoints;
+  delete p1, p2, genPoints;
 }
 
 void generatePointstoFile(int amount, string place)
@@ -845,78 +634,95 @@ void generatePointstoFile(int amount, string place)
   outfile.close();
 }
 
-void knuthShuffle(vector<Point> &points) {
-    random_device rd;
-    for(long unsigned int i=0;i<points.size();i++) {
-        uniform_int_distribution<int> uID(i, points.size()-1);
-        int place = uID(rd);
-        Point temp = points[place];
-        points[place] = points[i];
-        points[i] = temp;
-    }
+void knuthShuffle(vector<Point> &points)
+{
+  random_device rd;
+  for (long unsigned int i = 0; i < points.size(); i++)
+  {
+    uniform_int_distribution<int> uID(i, points.size() - 1);
+    int place = uID(rd);
+    Point temp = points[place];
+    points[place] = points[i];
+    points[i] = temp;
+  }
 }
-class hashPair {
+class hashPair
+{
 public:
-    size_t operator()(const SubSquare p) const
-    {
-        return p.row + p.col;
-    }
+  size_t operator()(const SubSquare p) const
+  {
+    return p.row + p.col;
+  }
 };
 
-void minDistanceFindP4(vector<Point> &points) {
-  if(points.size() ==2) {
-      min4 = points[0].calcDistance(points[1]);
-      p1M4 = points[0];
-      p2M4 = points[1];
-  } else {
-      double minTemp, calcDist;
-      unsigned long long locX, locY, startX, startY, changeLong, tempX, tempY;
-      unordered_map<SubSquare, Point*, hashPair> pointMap;
-      double distance = points[0].calcDistance(points[1]);
-      double change = distance /2;
-      pointMap[SubSquare((unsigned long long)(points[0].getX()/change), (unsigned long long)(points[0].getY()/change))] = &points[0]; 
-      pointMap[SubSquare((unsigned long long)(points[1].getX()/change), (unsigned long long)(points[1].getY()/change))] = &points[1];
-      p1M4 = points[0];
-      p2M4 = points[1];
-      for(long unsigned int i =2; i<points.size(); i++) {
-          minTemp = distance;
-          changeLong = (unsigned long long)(change);
-          locX = (unsigned long long)(points[i].getX()/change);
-          locY = (unsigned long long)(points[i].getY()/change);
-          startX = locX - 2;
-          startY = locY - 2;
-          for(long unsigned int j =0; j<5; j++) {
-              for(int k=0;k<5;k++) {
-                  tempX = startX+j;
-                  tempY = startY+k;
-                  SubSquare tempSquare = SubSquare(tempX, tempY); 
-                  if(pointMap.find(tempSquare) != pointMap.end())  {
-                      calcDist = pointMap[tempSquare]->calcDistance(points[i]);
-                      if(calcDist < minTemp) {
-                          minTemp = calcDist;
-                          p1M4 = points[i];
-                          p2M4 = *pointMap[tempSquare];
-                      }
-                  }
-              }
-          }
-          if(minTemp < distance) {
-            pointMap.clear();
-            distance = minTemp;
-            change = distance/2;
-            for(long unsigned int j =0; j<=i;j++) {
-                pointMap[SubSquare((unsigned long long)(points[j].getX()/change), (unsigned long long)(points[j].getY()/change))] = &points[j];
+void minDistanceFindP4(vector<Point> &points)
+{
+  if (points.size() == 2)
+  {
+    min4 = points[0].calcDistance(points[1]);
+    p1M4 = points[0];
+    p2M4 = points[1];
+  }
+  else
+  {
+    double minTemp, calcDist;
+    unsigned long long locX, locY, startX, startY, changeLong, tempX, tempY;
+    unordered_map<SubSquare, Point *, hashPair> pointMap;
+    double distance = points[0].calcDistanceNS(points[1]);
+    double change = sqrt(distance) / 2;
+    pointMap[SubSquare((unsigned long long)(points[0].getX() / change), (unsigned long long)(points[0].getY() / change))] = &points[0];
+    pointMap[SubSquare((unsigned long long)(points[1].getX() / change), (unsigned long long)(points[1].getY() / change))] = &points[1];
+    p1M4 = points[0];
+    p2M4 = points[1];
+    for (long unsigned int i = 2; i < points.size(); i++)
+    {
+      minTemp = distance;
+      changeLong = (unsigned long long)(change);
+      locX = (unsigned long long)(points[i].getX() / change);
+      locY = (unsigned long long)(points[i].getY() / change);
+      startX = locX - 2;
+      startY = locY - 2;
+      for (int j = 0; j < 5; j++)
+      {
+        for (int k = 0; k < 5; k++)
+        {
+          tempX = startX + j;
+          tempY = startY + k;
+          SubSquare tempSquare = SubSquare(tempX, tempY);
+          if (pointMap.find(tempSquare) != pointMap.end())
+          {
+            calcDist = pointMap[tempSquare]->calcDistanceNS(points[i]);
+            if (calcDist < minTemp)
+            {
+              minTemp = calcDist;
+              p1M4 = points[i];
+              p2M4 = *pointMap[tempSquare];
             }
-              
-          } else {
-              pointMap[SubSquare(locX, locY)] = &points[i];
           }
+        }
       }
-     min4 = distance;
+      if (minTemp < distance)
+      {
+        pointMap.clear();
+        distance = minTemp;
+        change = sqrt(distance) / 2;
+        for (long unsigned int j = 0; j <= i; j++)
+        {
+          pointMap[SubSquare((unsigned long long)(points[j].getX() / change), (unsigned long long)(points[j].getY() / change))] = &points[j];
+        }
+      }
+      else
+      {
+        pointMap[SubSquare(locX, locY)] = &points[i];
+      }
+    }
+    min4 = 2 * change;
+    pointMap.clear();
   }
 }
 
-void part4() {
+void part4()
+{
   vector<Point> *genPoints = new vector<Point>;
   readFile("points.txt", "  ", *genPoints);
   auto start = std::chrono::high_resolution_clock::now();
@@ -925,18 +731,17 @@ void part4() {
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<float> duration = end - start;
   time4 = duration.count();
+  delete genPoints;
 }
 
 int main()
 {
+      generatePointstoFile(500000, "points.txt");
   ofstream outfile("results.txt");
-//   part1();
-//   part2();
   part3();
   part4();
-
-cout << "For method 3\nPoints are: " << p1M3.toString() << " " << p2M3.toString() << " \nMinimum distance is: " << min3 << " \nTime is: " << time3 << " seconds" << endl;
-cout << "For method 4\nPoints are: " << p1M4.toString() << " " << p2M4.toString() << " \nMinimum distance is: " << min4 << " \nTime is: " << time4 << " seconds" << endl;
+  cout << "For method 3\nPoints are: " << p1M3.toString() << " " << p2M3.toString() << " \nMinimum distance is: " << min3 << " \nTime is: " << time3 << " seconds" << endl;
+  cout << "For method 4\nPoints are: " << p1M4.toString() << " " << p2M4.toString() << " \nMinimum distance is: " << min4 << " \nTime is: " << time4 << " seconds" << endl;
   outfile << "For method 3\nPoints are: " << p1M3.toString() << " " << p2M3.toString() << " \nMinimum distance is: " << min3 << " \nTime is: " << time3 << " seconds" << endl;
   outfile << "For method 4\nPoints are: " << p1M4.toString() << " " << p2M4.toString() << " \nMinimum distance is: " << min4 << " \nTime is: " << time4 << " seconds" << endl;
   outfile.close();
