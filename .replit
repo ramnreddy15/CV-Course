@@ -1,0 +1,2 @@
+language = "cpp"
+run = "g++ -std=c++11 -Ofast -o l053 -Wall l053.cpp"
