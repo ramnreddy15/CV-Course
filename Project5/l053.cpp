@@ -733,7 +733,7 @@ public:
                     value = 0;
                   }
                 } else if (tempAngle == 45) {
-                  if(value > magnitudes[i+1][j+1] && value > magnitudes[i-1][j-1]) {
+                  if(value > magnitudes[i-1][j+1] && value > magnitudes[i+1][j-1]) {
                     value = 1;
                   } else {
                     value = 0;
@@ -745,7 +745,7 @@ public:
                     value = 0;
                   }
                 } else {
-                  if(value > magnitudes[i-1][j+1] && value > magnitudes[i+1][j-1]) {
+                  if(value > magnitudes[i+1][j+1] && value > magnitudes[i-1][j-1]) {
                     value = 1;
                   } else {
                     value = 0;
@@ -794,7 +794,7 @@ void part3(int threshold1, int threshold2)
     delete c;
 }
 
-int main()
+int main() /////////////////////////// LOOK at atan2 problem and add cmd arguements
 {
     part3(7500, 85000);
     return 0;
