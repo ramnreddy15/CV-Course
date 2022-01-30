@@ -9,12 +9,15 @@
 #include <iterator>
 #include <random>
 #include <string>
+#include <cstring>
 #include <chrono>
 #include <algorithm>
 #include <limits>
 #include <cstdlib>
 #include <vector>
 #include <stack>
+
+#include <typeinfo>
 
 using namespace std;
 
@@ -571,12 +574,6 @@ public:
 
     void hystersisAlgo(int threshold1, int threshold2)
     {
-        if (threshold1 > threshold2)
-        {
-            int temp1 = threshold2;
-            threshold2 = threshold1;
-            threshold1 = temp1;
-        }
         convertBW();
         vector<vector<vector<int>>> temp;
         copy(image.begin(), image.end(), back_inserter(temp));
@@ -646,12 +643,6 @@ public:
     }
      void hystersisAlgoWAngles(int threshold1, int threshold2)
     {
-        if (threshold1 > threshold2)
-        {
-            int temp1 = threshold2;
-            threshold2 = threshold1;
-            threshold1 = temp1;
-        }
         convertBW();
         cout << "here" << endl;
         vector<vector<vector<int>>> temp;
@@ -770,32 +761,56 @@ public:
     }
 };
 
-void part1(int threshold)
+void part1(int threshold, string filename)
 {
-    PPMGenerator *c = new PPMGenerator("image.ppm");
+    PPMGenerator *c = new PPMGenerator(filename);
+    cout << "here" << endl;
     c->cannyEdgeDetect(threshold);
     delete c;
 }
 
-void part2(int threshold1, int threshold2)
+void part2(int threshold1, int threshold2, string filename)
 {
-    part1(threshold1);
-    PPMGenerator *c = new PPMGenerator("image.ppm");
+    part1(threshold1, filename);
+    PPMGenerator *c = new PPMGenerator(filename);
     c->hystersisAlgo(threshold1, threshold2);
     delete c;
 }
 
-void part3(int threshold1, int threshold2)
+void part3(int threshold1, int threshold2, string filename)
 {
-    part1(threshold1);
+    cout << threshold1 << " " << threshold2 << " " << filename << endl;
+    part1(threshold1, filename);
     cout << "here" << endl;
-    PPMGenerator *c = new PPMGenerator("image.ppm");
+    PPMGenerator *c = new PPMGenerator(filename);
     c->hystersisAlgoWAngles(threshold1, threshold2);
     delete c;
 }
 
-int main() /////////////////////////// LOOK at atan2 problem and add cmd arguements
+int main(int argc, char **argv) /////////////////////////// LOOK at atan2 problem and add cmd arguements
 {
-    part3(7500, 85000);
+    if(argc == 1) {
+        cout << "Please input arguements." << endl;
+        return 0;
+    }
+    int i;
+    int threshold1 = 0;
+    int threshold2 = 0;
+    string filename = "";
+    for (i = 0; i < argc; i++) {
+        printf("argv[%d] = %s\n", i, argv[i]);
+        if(strcmp(argv[i],"-L") == 0) {
+            threshold1 = stoi(string(argv[i+1]));
+            threshold1 = threshold1 * threshold1;
+        }
+        if(strcmp(argv[i],"-H") == 0) {
+            threshold2 = stoi(string(argv[i+1]));
+            threshold2 = threshold2 * threshold2;
+        }
+        if(strcmp(argv[i],"-F") == 0) {
+            filename = string(argv[i+1]);
+        }
+    }
+    part3(threshold1, threshold2, filename);
     return 0;
 }
