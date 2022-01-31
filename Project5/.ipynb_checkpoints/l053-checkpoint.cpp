@@ -17,8 +17,6 @@
 #include <vector>
 #include <stack>
 
-#include <typeinfo>
-
 using namespace std;
 
 // This is a point class
@@ -640,14 +638,14 @@ public:
         maxValue = 1;
         createPPMFile("image1.ppm");
         maxValue = temp2;
+        delete imaget;
     }
-     void hystersisAlgoWAngles(int threshold1, int threshold2)
+    void hystersisAlgoWAngles(int threshold1, int threshold2)
     {
         convertBW();
-        cout << "here" << endl;
         vector<vector<vector<int>>> temp;
-        vector<vector<int>> angles( rows , vector<int>(cols,0));
-        vector<vector<int>> magnitudes( rows , vector<int>(cols,0));
+        vector<vector<int>> angles(rows, vector<int>(cols, 0));
+        vector<vector<int>> magnitudes(rows, vector<int>(cols, 0));
         copy(image.begin(), image.end(), back_inserter(temp));
         vector<Point> places;
         vector<int> *imaget = new vector<int>();
@@ -688,11 +686,14 @@ public:
                         image[i][j][2] = 0;
                     }
                     magnitudes[i][j] = mathOperation;
-                    tempAngle = atan2(gX,gY)*180/3.1415;
-                    if(angles[i][j]%45 >= 22.5) {
-                      angles[i][j] = ceil(tempAngle/45)*45;
-                    } else {
-                      angles[i][j] = floor(tempAngle/45)*45;
+                    tempAngle = atan2(gX, gY) * 180 / 3.1415;
+                    if (angles[i][j] % 45 >= 22.5)
+                    {
+                        angles[i][j] = ceil(tempAngle / 45) * 45;
+                    }
+                    else
+                    {
+                        angles[i][j] = floor(tempAngle / 45) * 45;
                     }
                 }
                 imaget->push_back(image[i][j][0]);
@@ -707,64 +708,103 @@ public:
         {
             for (int j = 0; j < cols; j++)
             {
-              if(i == 0 || j == 0 || j == cols - 1 || i == rows - 1) {
-                  image[i][j][0] = 0;
-                  image[i][j][1] = 0;
-                  image[i][j][2] = 0;
-              } else {
-                if(imaget->operator[](i * cols + j) == 2) {
-                  imaget->operator[](i * cols + j) = 0;
+                if (i == 0 || j == 0 || j == cols - 1 || i == rows - 1)
+                {
+                    image[i][j][0] = 0;
+                    image[i][j][1] = 0;
+                    image[i][j][2] = 0;
                 }
-                tempAngle = abs(angles[i][j]);
-                int value = magnitudes[i][j];
-                if(tempAngle == 0 || tempAngle == 180) {
-                  if(value > magnitudes[i][j+1] && value > magnitudes[i][j-1]) {
-                    value = 1;
-                  } else {
-                    value = 0;
-                  }
-                } else if (tempAngle == 45) {
-                  if(value > magnitudes[i-1][j+1] && value > magnitudes[i+1][j-1]) {
-                    value = 1;
-                  } else {
-                    value = 0;
-                  }
-                } else if (tempAngle == 90) {
-                  if(value > magnitudes[i+1][j] && value > magnitudes[i-1][j]) {
-                    value = 1;
-                  } else {
-                    value = 0;
-                  }
-                } else {
-                  if(value > magnitudes[i+1][j+1] && value > magnitudes[i-1][j-1]) {
-                    value = 1;
-                  } else {
-                    value = 0;
-                  }
+                else
+                {
+                    if (imaget->operator[](i * cols + j) == 2)
+                    {
+                        imaget->operator[](i * cols + j) = 0;
+                    }
+                    tempAngle = abs(angles[i][j]);
+                    int value = magnitudes[i][j];
+                    if (tempAngle == 0 || tempAngle == 180)
+                    {
+                        if (value > magnitudes[i][j + 1] && value > magnitudes[i][j - 1])
+                        {
+                            value = 1;
+                        }
+                        else
+                        {
+                            value = 0;
+                        }
+                    }
+                    else if (tempAngle == 45)
+                    {
+                        if (value > magnitudes[i - 1][j + 1] && value > magnitudes[i + 1][j - 1])
+                        {
+                            value = 1;
+                        }
+                        else
+                        {
+                            value = 0;
+                        }
+                    }
+                    else if (tempAngle == 90)
+                    {
+                        if (value > magnitudes[i + 1][j] && value > magnitudes[i - 1][j])
+                        {
+                            value = 1;
+                        }
+                        else
+                        {
+                            value = 0;
+                        }
+                    }
+                    else
+                    {
+                        if (value > magnitudes[i + 1][j + 1] && value > magnitudes[i - 1][j - 1])
+                        {
+                            value = 1;
+                        }
+                        else
+                        {
+                            value = 0;
+                        }
+                    }
+                    image[i][j][0] = value;
+                    image[i][j][1] = value;
+                    image[i][j][2] = value;
                 }
-                if(imaget->operator[](i * cols + j) == 1 && value == 1) {
-                  image[i][j][0] = 1;
-                  image[i][j][1] = 1;
-                  image[i][j][2] = 1;
-                } else {
-                  image[i][j][0] = 0;
-                  image[i][j][1] = 0;
-                  image[i][j][2] = 0;
-                }
-              }
             }
         }
         int temp2 = maxValue;
         maxValue = 1;
-        createPPMFile("image1.ppm");
+        createPPMFile("image2.ppm");
         maxValue = temp2;
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                if (imaget->operator[](i * cols + j) == 1 && image[i][j][0] == 1)
+                {
+                    image[i][j][0] = 1;
+                    image[i][j][1] = 1;
+                    image[i][j][2] = 1;
+                }
+                else
+                {
+                    image[i][j][0] = 0;
+                    image[i][j][1] = 0;
+                    image[i][j][2] = 0;
+                }
+            }
+        }
+        temp2 = maxValue;
+        maxValue = 1;
+        createPPMFile("imagef.ppm");
+        maxValue = temp2;
+        delete imaget;
     }
 };
 
 void part1(int threshold, string filename)
 {
     PPMGenerator *c = new PPMGenerator(filename);
-    cout << "here" << endl;
     c->cannyEdgeDetect(threshold);
     delete c;
 }
@@ -779,38 +819,42 @@ void part2(int threshold1, int threshold2, string filename)
 
 void part3(int threshold1, int threshold2, string filename)
 {
-    cout << threshold1 << " " << threshold2 << " " << filename << endl;
-    part1(threshold1, filename);
-    cout << "here" << endl;
+    part2(threshold1, threshold2, filename);
     PPMGenerator *c = new PPMGenerator(filename);
     c->hystersisAlgoWAngles(threshold1, threshold2);
     delete c;
 }
 
-int main(int argc, char **argv) /////////////////////////// LOOK at atan2 problem and add cmd arguements
+int main(int argc, char **argv)
 {
-    if(argc == 1) {
-        cout << "Please input arguements." << endl;
-        return 0;
+    if (argc == 1)
+    {
+        part3(10000, 60000, "image.ppm");
     }
-    int i;
-    int threshold1 = 0;
-    int threshold2 = 0;
-    string filename = "";
-    for (i = 0; i < argc; i++) {
-        printf("argv[%d] = %s\n", i, argv[i]);
-        if(strcmp(argv[i],"-L") == 0) {
-            threshold1 = stoi(string(argv[i+1]));
-            threshold1 = threshold1 * threshold1;
+    else
+    {
+        int i;
+        int threshold1 = 0;
+        int threshold2 = 0;
+        string filename = "";
+        for (i = 0; i < argc; i++)
+        {
+            if (strcmp(argv[i], "-L") == 0)
+            {
+                threshold1 = stoi(string(argv[i + 1]));
+                threshold1 = threshold1 * threshold1;
+            }
+            if (strcmp(argv[i], "-H") == 0)
+            {
+                threshold2 = stoi(string(argv[i + 1]));
+                threshold2 = threshold2 * threshold2;
+            }
+            if (strcmp(argv[i], "-F") == 0)
+            {
+                filename = string(argv[i + 1]);
+            }
         }
-        if(strcmp(argv[i],"-H") == 0) {
-            threshold2 = stoi(string(argv[i+1]));
-            threshold2 = threshold2 * threshold2;
-        }
-        if(strcmp(argv[i],"-F") == 0) {
-            filename = string(argv[i+1]);
-        }
+        part3(threshold1, threshold2, filename);
     }
-    part3(threshold1, threshold2, filename);
     return 0;
 }
