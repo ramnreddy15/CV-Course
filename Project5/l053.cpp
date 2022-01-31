@@ -17,8 +17,6 @@
 #include <vector>
 #include <stack>
 
-#include <typeinfo>
-
 using namespace std;
 
 // This is a point class
@@ -640,11 +638,11 @@ public:
         maxValue = 1;
         createPPMFile("image1.ppm");
         maxValue = temp2;
+        delete imaget;
     }
      void hystersisAlgoWAngles(int threshold1, int threshold2)
     {
         convertBW();
-        cout << "here" << endl;
         vector<vector<vector<int>>> temp;
         vector<vector<int>> angles( rows , vector<int>(cols,0));
         vector<vector<int>> magnitudes( rows , vector<int>(cols,0));
@@ -742,7 +740,21 @@ public:
                     value = 0;
                   }
                 }
-                if(imaget->operator[](i * cols + j) == 1 && value == 1) {
+                  image[i][j][0] = value;
+                  image[i][j][1] = value;
+                  image[i][j][2] = value;
+              }
+            }
+        }
+        int temp2 = maxValue;
+        maxValue = 1;
+        createPPMFile("image2.ppm");
+        maxValue = temp2;
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+              if(imaget->operator[](i * cols + j) == 1 && image[i][j][0] == 1) {
                   image[i][j][0] = 1;
                   image[i][j][1] = 1;
                   image[i][j][2] = 1;
@@ -751,20 +763,19 @@ public:
                   image[i][j][1] = 0;
                   image[i][j][2] = 0;
                 }
-              }
             }
         }
-        int temp2 = maxValue;
+        temp2 = maxValue;
         maxValue = 1;
-        createPPMFile("image1.ppm");
+        createPPMFile("imagef.ppm");
         maxValue = temp2;
+        delete imaget;
     }
 };
 
 void part1(int threshold, string filename)
 {
     PPMGenerator *c = new PPMGenerator(filename);
-    cout << "here" << endl;
     c->cannyEdgeDetect(threshold);
     delete c;
 }
@@ -779,38 +790,35 @@ void part2(int threshold1, int threshold2, string filename)
 
 void part3(int threshold1, int threshold2, string filename)
 {
-    cout << threshold1 << " " << threshold2 << " " << filename << endl;
-    part1(threshold1, filename);
-    cout << "here" << endl;
+    part2(threshold1, threshold2, filename);
     PPMGenerator *c = new PPMGenerator(filename);
     c->hystersisAlgoWAngles(threshold1, threshold2);
     delete c;
 }
 
-int main(int argc, char **argv) /////////////////////////// LOOK at atan2 problem and add cmd arguements
+int main(int argc, char **argv) 
 {
     if(argc == 1) {
-        cout << "Please input arguements." << endl;
-        return 0;
+        part3(10000, 60000, "image.ppm");
+    } else {
+      int i;
+      int threshold1 = 0;
+      int threshold2 = 0;
+      string filename = "";
+      for (i = 0; i < argc; i++) {
+          if(strcmp(argv[i],"-L") == 0) {
+              threshold1 = stoi(string(argv[i+1]));
+              threshold1 = threshold1 * threshold1;
+          }
+          if(strcmp(argv[i],"-H") == 0) {
+              threshold2 = stoi(string(argv[i+1]));
+              threshold2 = threshold2 * threshold2;
+          }
+          if(strcmp(argv[i],"-F") == 0) {
+              filename = string(argv[i+1]);
+          }
+      }
+      part3(threshold1, threshold2, filename);
     }
-    int i;
-    int threshold1 = 0;
-    int threshold2 = 0;
-    string filename = "";
-    for (i = 0; i < argc; i++) {
-        printf("argv[%d] = %s\n", i, argv[i]);
-        if(strcmp(argv[i],"-L") == 0) {
-            threshold1 = stoi(string(argv[i+1]));
-            threshold1 = threshold1 * threshold1;
-        }
-        if(strcmp(argv[i],"-H") == 0) {
-            threshold2 = stoi(string(argv[i+1]));
-            threshold2 = threshold2 * threshold2;
-        }
-        if(strcmp(argv[i],"-F") == 0) {
-            filename = string(argv[i+1]);
-        }
-    }
-    part3(threshold1, threshold2, filename);
     return 0;
 }
