@@ -801,60 +801,46 @@ public:
         delete imaget;
     }
 };
-
-void part1(int threshold, string filename)
-{
-    PPMGenerator *c = new PPMGenerator(filename);
-    c->cannyEdgeDetect(threshold);
-    delete c;
+void part1(int threshold1, int threshold2, string filename) {
+	PPMGenerator *c = new PPMGenerator(filename);
+	c->cannyEdgeDetect(threshold);
+	c->hystersisAlgo(threshold1, threshold2);
+	c->hystersisAlgoWAngles(threshold1, threshold2);
+	delete c;
 }
 
-void part2(int threshold1, int threshold2, string filename)
-{
-    part1(threshold1, filename);
-    PPMGenerator *c = new PPMGenerator(filename);
-    c->hystersisAlgo(threshold1, threshold2);
-    delete c;
-}
-
-void part3(int threshold1, int threshold2, string filename)
-{
-    part2(threshold1, threshold2, filename);
-    PPMGenerator *c = new PPMGenerator(filename);
-    c->hystersisAlgoWAngles(threshold1, threshold2);
-    delete c;
-}
 
 int main(int argc, char **argv)
 {
-    if (argc == 1)
-    {
-        part3(10000, 60000, "image.ppm");
-    }
-    else
-    {
-        int i;
-        int threshold1 = 0;
-        int threshold2 = 0;
-        string filename = "";
-        for (i = 0; i < argc; i++)
-        {
-            if (strcmp(argv[i], "-L") == 0)
-            {
-                threshold1 = stoi(string(argv[i + 1]));
-                threshold1 = threshold1 * threshold1;
-            }
-            if (strcmp(argv[i], "-H") == 0)
-            {
-                threshold2 = stoi(string(argv[i + 1]));
-                threshold2 = threshold2 * threshold2;
-            }
-            if (strcmp(argv[i], "-F") == 0)
-            {
-                filename = string(argv[i + 1]);
-            }
-        }
-        part3(threshold1, threshold2, filename);
-    }
-    return 0;
+	if (argc == 1)
+	{
+	    part3(10000, 60000, "image.ppm");
+	}
+	else
+	{
+	    int i;
+	    int threshold1 = 0;
+	    int threshold2 = 0;
+	    string filename = "";
+	    for (i = 0; i < argc; i++)
+	    {
+	    if (strcmp(argv[i], "-L") == 0)
+	    {
+	      threshold1 = stoi(string(argv[i + 1]));
+	                   threshold1 = threshold1 * threshold1;
+	    }
+		            if (strcmp(argv[i], "-H") == 0)
+	               {
+	             threshold2 = stoi(string(argv[i + 1]));
+	               threshold2 = threshold2 * threshold2;
+	            }
+	               if (strcmp(argv[i], "-F") == 0)
+			            {
+	                  filename = string(argv[i + 1]);
+	              }
+	       }
+		            part1(threshold1, threshold2, filename);
+	   }
+	 return 0;
 }
+
