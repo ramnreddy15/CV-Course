@@ -17,6 +17,8 @@
 #include <vector>
 #include <stack>
 
+#define PI 3.14159265
+
 using namespace std;
 
 // This is a point class
@@ -281,14 +283,14 @@ public:
     }
 
     // Case 1 and 2 when drawing a line: (x2 > x1 and y2 > y1) or (x2 < x1 and y2 < y1)
-    void case1and2(int x1, int y1, int x2, int y2, int changeX, int changeY)
+    void case1and2(int x1, int y1, int x2, int y2, int changeX, int changeY, int shade[3])
     {
         int j = y1;
         int error = changeY - changeX;
 
         for (int i = x1; i < x2; i++)
         {
-            setPixel(i, j, 0, 0, 0);
+            setPixel(i, j, shade[0], shade[1], shade[2]);
             if (error >= 0)
             {
                 j += 1;
@@ -299,23 +301,23 @@ public:
     }
 
     // Case 3 and 4 when drawing a line: (x2 > x1 and y2 = y1) or (Case 4: x2 < x1 and y2 = y1)
-    void case3and4(int x1, int y, int x2)
+    void case3and4(int x1, int y, int x2, int shade[3])
     {
         for (int i = x1; i < x2; i++)
         {
-            setPixel(i, y, 0, 0, 0);
+            setPixel(i, y, shade[0], shade[1], shade[2]);
         }
     }
 
     // Case 5 and 6 when drawing a line: (x2 < x1 and y2 > y1) or ( x2 > x1 and y2 < y1)
-    void case5and6(int x1, int y1, int x2, int y2, int changeX, int changeY)
+    void case5and6(int x1, int y1, int x2, int y2, int changeX, int changeY, int shade[3])
     {
         int j = y1;
         int error = changeY - changeX;
 
         for (int i = x1; i >= x2; i--)
         {
-            setPixel(i, j, 0, 0, 0);
+            setPixel(i, j, shade[0], shade[1], shade[2]);
             if (error >= 0)
             {
                 j += 1;
@@ -326,14 +328,14 @@ public:
     }
 
     // Case 7 and 8 when drawing a line: (x2 > x1 and y2 > y1) or (x2 < x1 and y2 < y1)
-    void case7and8(int x1, int y1, int x2, int y2, int changeX, int changeY)
+    void case7and8(int x1, int y1, int x2, int y2, int changeX, int changeY, int shade[3])
     {
         int j = x1;
         int error = changeX - changeY;
 
         for (int i = y1; i < y2; i++)
         {
-            setPixel(j, i, 0, 0, 0);
+            setPixel(j, i, shade[0], shade[1], shade[2]);
             if (error >= 0)
             {
                 j += 1;
@@ -344,14 +346,14 @@ public:
     }
 
     // Case 9 and 10 when drawing a line: (x2 > x1 and y2 < y1) or (x2 < x1 and y2 > y1)
-    void case9and10(int x1, int y1, int x2, int y2, int changeX, int changeY)
+    void case9and10(int x1, int y1, int x2, int y2, int changeX, int changeY, int shade[3])
     {
         int j = x1;
         int error = changeX - changeY;
 
         for (int i = y1; i >= y2; i--)
         {
-            setPixel(j, i, 0, 0, 0);
+            setPixel(j, i, shade[0], shade[1], shade[2]);
             if (error >= 0)
             {
                 j += 1;
@@ -362,16 +364,16 @@ public:
     }
 
     // Case 11 and 12 when drawing a line: (x2 < x1 and y2 > y1) or (x2 = x1 and y2 < y1)
-    void case11and12(int x, int y1, int y2)
+    void case11and12(int x, int y1, int y2, int shade[3])
     {
         for (int i = y1; i < y2; i++)
         {
-            setPixel(x, i, 0, 0, 0);
+            setPixel(x, i, shade[0], shade[1], shade[2]);
         }
     }
 
     // This method creates a line in the image array when callled
-    void bresenhamLine(Point point1, Point point2, int scaler)
+    void bresenhamLine(Point point1, Point point2, int scaler, int shade[3])
     {
         int x1 = (int)(point1.getX() * scaler);
         int y1 = (int)(point1.getY() * scaler);
@@ -387,32 +389,32 @@ public:
             if (x2 > x1 && y2 > y1) // Case 1: x2 > x1 and y2 > y1
             {
                 cout << "Case 1" << endl;
-                case1and2(x1, y1, x2, y2, changeX, changeY);
+                case1and2(x1, y1, x2, y2, changeX, changeY, shade);
             }
             else if (x2 < x1 && y2 < y1) // Case 2: x2 < x1 and y2 < y1
             {
                 cout << "Case 2" << endl;
-                case1and2(x2, y2, x1, y1, changeX, changeY);
+                case1and2(x2, y2, x1, y1, changeX, changeY, shade);
             }
             else if (x2 > x1 && y2 == y1) // Case 3: x2 > x1 and y2 = y1
             {
                 cout << "Case 3" << endl;
-                case3and4(x1, y1, x2);
+                case3and4(x1, y1, x2, shade);
             }
             else if (x2 < x1 && y2 == y1) // Case 4: x2 < x1 and y2 = y1
             {
                 cout << "Case 4" << endl;
-                case3and4(x2, y1, x1);
+                case3and4(x2, y1, x1, shade);
             }
             else if (x2 < x1 && y2 > y1) // Case 5: x2 < x1 and y2 > y1
             {
                 cout << "Case 5" << endl;
-                case5and6(x1, y1, x2, y2, changeX, changeY);
+                case5and6(x1, y1, x2, y2, changeX, changeY, shade);
             }
             else if (x2 > x1 && y2 < y1) // Case 6: x2 > x1 and y2 < y1
             {
                 cout << "Case 6" << endl;
-                case5and6(x2, y2, x1, y1, changeX, changeY);
+                case5and6(x2, y2, x1, y1, changeX, changeY, shade);
             }
         }
         else // 6 cases for Y Direct Axis
@@ -420,37 +422,37 @@ public:
             if (x2 > x1 && y2 > y1) // Case 7: x2 > x1 and y2 > y1
             {
                 cout << "Case 7" << endl;
-                case7and8(x1, y1, x2, y2, changeX, changeY);
+                case7and8(x1, y1, x2, y2, changeX, changeY, shade);
             }
             else if (x2 < x1 && y2 < y1) // Case 8: x2 < x1 and y2 < y1
             {
                 cout << "Case 8" << endl;
-                case7and8(x2, y2, x1, y1, changeX, changeY);
+                case7and8(x2, y2, x1, y1, changeX, changeY, shade);
             }
             else if (x2 > x1 && y2 < y1) // Case 9: x2 > x1 and y2 < y1
             {
                 cout << "Case 9" << endl;
-                case9and10(x1, y1, x2, y2, changeX, changeY);
+                case9and10(x1, y1, x2, y2, changeX, changeY, shade);
             }
             else if (x2 < x1 && y2 > y1) // Case 10: x2 < x1 and y2 > y1
             {
                 cout << "Case 10" << endl;
-                case9and10(x2, y2, x1, y1, changeX, changeY);
+                case9and10(x2, y2, x1, y1, changeX, changeY, shade);
             }
             else if (x2 == x1 && y2 > y1) // Case 11: x2 = x1 and y2 > y1
             {
                 cout << "Case 11" << endl;
-                case11and12(x1, y1, y2);
+                case11and12(x1, y1, y2, shade);
             }
             else // Case 12: x2 = x1 and y2 < y1
             {
                 cout << "Case 12" << endl;
-                case11and12(x1, y2, y1);
+                case11and12(x1, y2, y1, shade);
             }
         }
     }
 
-    void screenLine(Point point1, Point point2, int scaler)
+    void screenLine(Point point1, Point point2, int scaler, int shade[3])
     {
         double slope = 0.0, b = 0.0;
         slope =
@@ -459,12 +461,12 @@ public:
         {
             b = point1.getY() - (slope * point1.getX());
             bresenhamLine(Point((0 - b) / slope, 0),
-                          Point((rows - b) / slope, rows), scaler);
+                          Point((rows - b) / slope, rows), scaler, shade);
         }
         else
         {
             bresenhamLine(Point(point2.getX() * scaler, 0),
-                          Point(point2.getX() * scaler, rows), scaler);
+                          Point(point2.getX() * scaler, rows), scaler, shade);
         }
     }
 
@@ -640,7 +642,7 @@ public:
         maxValue = temp2;
         delete imaget;
     }
-    void hystersisAlgoWAngles(int threshold1, int threshold2)
+    vector<vector<int>> hystersisAlgoWAngles(int threshold1, int threshold2)
     {
         convertBW();
         vector<vector<vector<int>>> temp;
@@ -686,7 +688,7 @@ public:
                         image[i][j][2] = 0;
                     }
                     magnitudes[i][j] = mathOperation;
-                    tempAngle = atan2(gX, gY) * 180 / 3.1415;
+                    tempAngle = atan2(gX, gY) * 180 / PI;
                     if (angles[i][j] % 45 >= 22.5)
                     {
                         angles[i][j] = ceil(tempAngle / 45) * 45;
@@ -791,7 +793,7 @@ public:
                     image[i][j][0] = 0;
                     image[i][j][1] = 0;
                     image[i][j][2] = 0;
-                }
+                }                
             }
         }
         temp2 = maxValue;
@@ -799,13 +801,33 @@ public:
         createPPMFile("imagef.ppm");
         maxValue = temp2;
         delete imaget;
+        return angles;
     }
+    
+ 
+    void findCenter(int threshold1, int threshold2) {
+		int shade[3] = {255,165,0};
+		vector<vector<vector<int>>> temp;
+        copy(image.begin(), image.end(), back_inserter(temp));
+        vector<vector<int>> addedValues(rows, vector<int>(cols, 0));
+		vector<vector<int>> angles = hystersisAlgoWAngles(threshold1, threshold2);
+		cout << "Finished hystersis" << endl;
+		cout << maxValue << endl;
+		for(int i =0; i<rows; i++) {
+			for(int j =0;j<cols;j++) {
+				if(temp[i][j][0] == 1) {
+					cout << "Angle: " << angles[i][j] << endl;
+					screenLine(Point(i,j), Point(i+1*cos(angles[i][j]*PI/180), j+1*cos(angles[i][j]*PI/180)),1,shade);
+					
+				}
+			}
+		}
+        createPPMFile("imagef2.ppm");
+	}
 };
 void part1(int threshold1, int threshold2, string filename) {
 	PPMGenerator *c = new PPMGenerator(filename);
-	c->cannyEdgeDetect(threshold);
-	c->hystersisAlgo(threshold1, threshold2);
-	c->hystersisAlgoWAngles(threshold1, threshold2);
+	c->findCenter(threshold1, threshold2);
 	delete c;
 }
 
@@ -814,7 +836,7 @@ int main(int argc, char **argv)
 {
 	if (argc == 1)
 	{
-	    part3(10000, 60000, "image.ppm");
+	    part1(10000, 60000, "image.ppm");
 	}
 	else
 	{
