@@ -48,24 +48,13 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /cluster/2023rreddy/CV-Course/OpenCVTest
+CMAKE_SOURCE_DIR = /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /cluster/2023rreddy/CV-Course/OpenCVTest
+CMAKE_BINARY_DIR = /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest
 
 #=============================================================================
 # Targets provided globally by CMake.
-
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -78,11 +67,22 @@ edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
 
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
+
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /cluster/2023rreddy/CV-Course/OpenCVTest/CMakeFiles /cluster/2023rreddy/CV-Course/OpenCVTest/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest/CMakeFiles /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /cluster/2023rreddy/CV-Course/OpenCVTest/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,44 +111,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named DisplayImage
+# Target rules for targets named Chapter2
 
 # Build rule for target.
-DisplayImage: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 DisplayImage
-.PHONY : DisplayImage
+Chapter2: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 Chapter2
+.PHONY : Chapter2
 
 # fast build rule for target.
-DisplayImage/fast:
-	$(MAKE) -f CMakeFiles/DisplayImage.dir/build.make CMakeFiles/DisplayImage.dir/build
-.PHONY : DisplayImage/fast
+Chapter2/fast:
+	$(MAKE) -f CMakeFiles/Chapter2.dir/build.make CMakeFiles/Chapter2.dir/build
+.PHONY : Chapter2/fast
 
-DisplayImage.o: DisplayImage.cpp.o
+Chapter2.o: Chapter2.cpp.o
 
-.PHONY : DisplayImage.o
+.PHONY : Chapter2.o
 
 # target to build an object file
-DisplayImage.cpp.o:
-	$(MAKE) -f CMakeFiles/DisplayImage.dir/build.make CMakeFiles/DisplayImage.dir/DisplayImage.cpp.o
-.PHONY : DisplayImage.cpp.o
+Chapter2.cpp.o:
+	$(MAKE) -f CMakeFiles/Chapter2.dir/build.make CMakeFiles/Chapter2.dir/Chapter2.cpp.o
+.PHONY : Chapter2.cpp.o
 
-DisplayImage.i: DisplayImage.cpp.i
+Chapter2.i: Chapter2.cpp.i
 
-.PHONY : DisplayImage.i
+.PHONY : Chapter2.i
 
 # target to preprocess a source file
-DisplayImage.cpp.i:
-	$(MAKE) -f CMakeFiles/DisplayImage.dir/build.make CMakeFiles/DisplayImage.dir/DisplayImage.cpp.i
-.PHONY : DisplayImage.cpp.i
+Chapter2.cpp.i:
+	$(MAKE) -f CMakeFiles/Chapter2.dir/build.make CMakeFiles/Chapter2.dir/Chapter2.cpp.i
+.PHONY : Chapter2.cpp.i
 
-DisplayImage.s: DisplayImage.cpp.s
+Chapter2.s: Chapter2.cpp.s
 
-.PHONY : DisplayImage.s
+.PHONY : Chapter2.s
 
 # target to generate assembly for a file
-DisplayImage.cpp.s:
-	$(MAKE) -f CMakeFiles/DisplayImage.dir/build.make CMakeFiles/DisplayImage.dir/DisplayImage.cpp.s
-.PHONY : DisplayImage.cpp.s
+Chapter2.cpp.s:
+	$(MAKE) -f CMakeFiles/Chapter2.dir/build.make CMakeFiles/Chapter2.dir/Chapter2.cpp.s
+.PHONY : Chapter2.cpp.s
 
 # Help Target
 help:
@@ -156,12 +156,12 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... DisplayImage"
-	@echo "... DisplayImage.o"
-	@echo "... DisplayImage.i"
-	@echo "... DisplayImage.s"
+	@echo "... rebuild_cache"
+	@echo "... Chapter2"
+	@echo "... Chapter2.o"
+	@echo "... Chapter2.i"
+	@echo "... Chapter2.s"
 .PHONY : help
 
 
