@@ -48,24 +48,13 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest
+CMAKE_SOURCE_DIR = /cluster/2023rreddy/CV-Course/OpenCVTest
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest
+CMAKE_BINARY_DIR = /cluster/2023rreddy/CV-Course/OpenCVTest
 
 #=============================================================================
 # Targets provided globally by CMake.
-
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
@@ -78,11 +67,22 @@ rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
+
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest/CMakeFiles /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /cluster/2023rreddy/CV-Course/OpenCVTest/CMakeFiles /cluster/2023rreddy/CV-Course/OpenCVTest/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /cluster/2023rreddy/CV-Course/OpenCVTest/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,44 +111,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named Chapter2
+# Target rules for targets named l071
 
 # Build rule for target.
-Chapter2: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 Chapter2
-.PHONY : Chapter2
+l071: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 l071
+.PHONY : l071
 
 # fast build rule for target.
-Chapter2/fast:
-	$(MAKE) -f CMakeFiles/Chapter2.dir/build.make CMakeFiles/Chapter2.dir/build
-.PHONY : Chapter2/fast
+l071/fast:
+	$(MAKE) -f CMakeFiles/l071.dir/build.make CMakeFiles/l071.dir/build
+.PHONY : l071/fast
 
-Chapter2.o: Chapter2.cpp.o
+l071.o: l071.cpp.o
 
-.PHONY : Chapter2.o
+.PHONY : l071.o
 
 # target to build an object file
-Chapter2.cpp.o:
-	$(MAKE) -f CMakeFiles/Chapter2.dir/build.make CMakeFiles/Chapter2.dir/Chapter2.cpp.o
-.PHONY : Chapter2.cpp.o
+l071.cpp.o:
+	$(MAKE) -f CMakeFiles/l071.dir/build.make CMakeFiles/l071.dir/l071.cpp.o
+.PHONY : l071.cpp.o
 
-Chapter2.i: Chapter2.cpp.i
+l071.i: l071.cpp.i
 
-.PHONY : Chapter2.i
+.PHONY : l071.i
 
 # target to preprocess a source file
-Chapter2.cpp.i:
-	$(MAKE) -f CMakeFiles/Chapter2.dir/build.make CMakeFiles/Chapter2.dir/Chapter2.cpp.i
-.PHONY : Chapter2.cpp.i
+l071.cpp.i:
+	$(MAKE) -f CMakeFiles/l071.dir/build.make CMakeFiles/l071.dir/l071.cpp.i
+.PHONY : l071.cpp.i
 
-Chapter2.s: Chapter2.cpp.s
+l071.s: l071.cpp.s
 
-.PHONY : Chapter2.s
+.PHONY : l071.s
 
 # target to generate assembly for a file
-Chapter2.cpp.s:
-	$(MAKE) -f CMakeFiles/Chapter2.dir/build.make CMakeFiles/Chapter2.dir/Chapter2.cpp.s
-.PHONY : Chapter2.cpp.s
+l071.cpp.s:
+	$(MAKE) -f CMakeFiles/l071.dir/build.make CMakeFiles/l071.dir/l071.cpp.s
+.PHONY : l071.cpp.s
 
 # Help Target
 help:
@@ -156,12 +156,12 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... Chapter2"
-	@echo "... Chapter2.o"
-	@echo "... Chapter2.i"
-	@echo "... Chapter2.s"
+	@echo "... edit_cache"
+	@echo "... l071"
+	@echo "... l071.o"
+	@echo "... l071.i"
+	@echo "... l071.s"
 .PHONY : help
 
 

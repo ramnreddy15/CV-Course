@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest/Chapter2.cpp
+/cluster/2023rreddy/CV-Course/OpenCVTest/Chapter2.cpp
 stdio.h
 -
 iostream
