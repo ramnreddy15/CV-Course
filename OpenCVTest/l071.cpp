@@ -43,7 +43,7 @@ int main(int argc, char** argv )
             // (min_radius & max_radius) to detect larger circles
     );
     
-    for( size_t  i = 0; i < circles.size(); i++ )
+    for( int  i = 0; i < circles.size(); i++ )
     {
         Vec3i c = circles[i];
         int leftX = c[0]-c[2], leftY = c[1]-c[2];
@@ -74,8 +74,8 @@ int main(int argc, char** argv )
             
 //         }
     }
-    
-    if (combo[i].getY() + start >= 150) {
+   /* for(int i =0; i< circles.size(); i++) {
+        if ( >= 150) {
          if (stupidSumR > 1.3 * stupidSumB) {
               realCenter.erase(realCenter.begin() +i);
               combo.erase(combo.begin() +i);
@@ -121,6 +121,7 @@ int main(int argc, char** argv )
           }
 
      }
+    }
      
          for (long unsigned int i = 0; i < realCenter.size(); i++) {
              if (coinTypes[i] == 1) {
@@ -174,7 +175,7 @@ int main(int argc, char** argv )
          cout << coinsS << " Silver Dollars, " << coinsQ << " Quarters, " << coinsD << " Dimes, " << coinsN << " Nickels, " << coinsP << " Pennies, " << "Total Sum: $" << amount << endl;
          ofstream outfile("results.txt");
          outfile << coinsS << " Silver Dollars, " << coinsQ << " Quarters, " << coinsD << " Dimes, " << coinsN << " Nickels, " << coinsP << " Pennies, " << "Total Sum: $" << amount << endl;
-         outfile.close();
+         outfile.close();*/
     imwrite("./Images/DetectCircle.jpg",image);
 
     return 0;
