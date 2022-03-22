@@ -22,6 +22,31 @@ int main(int argc, char** argv )
     int threshold1 = 50, threshold2 = 100, minDist = 150, minPercentage = 29;
     double amount = 0;
     int coinsP = 0, coinsN = 0, coinsD = 0, coinsQ = 0, coinsS = 0;
+    int shadeP[3] = {
+             255,
+             0,
+             0
+         };
+         int shadeN[3] = {
+             128,
+             0,
+             128
+         };
+         int shadeD[3] = {
+             0,
+             0,
+             255
+         };
+         int shadeQ[3] = {
+             0,
+             255,
+             0
+         };
+         int shadeS[3] = {
+             255,
+             255,
+             0
+         };
     vector < int > coinTypes;
     
     if ( !image.data )
@@ -61,121 +86,82 @@ int main(int argc, char** argv )
 //         imwrite("./Images/roi.jpg",roi);
 //         imwrite("./Images/mask.jpg",roi&mask);
 //         if(abs(((mean1[0]+mean1[1]+mean1[2])/3)- 200) > 20){
-            Point center = Point(c[0], c[1]);
-            // circle center
-            circle( image, center, 1, Scalar(0,100,100), 3, LINE_AA);
-            // circle outline
-            int radius = c[2];
-            circle( image, center, radius, Scalar(255,0,255), 3, LINE_AA);
+      if (c[2] >= 150) {
+//          if (stupidSumR > 1.3 * stupidSumB) {
+//               realCenter.erase(realCenter.begin() +i);
+//               combo.erase(combo.begin() +i);
+//               i--;
+//               amount+=0;                     
+//          } else {
+         amount += 1;
+         coinTypes.push_back(5);
+         coinsS += 1; 
+//        }
+      } else if (c[2] >= 103) {
+//          if (stupidSumR > 1.3 * stupidSumB) {
+//               realCenter.erase(realCenter.begin() +i);
+//               combo.erase(combo.begin() +i);
+//               i--;
+//               amount+=0;                     
+//          } else {
+             amount += .25;
+             coinTypes.push_back(1);
+             coinsQ += 1;                     
+//          }
+
+     }
+     else if (c[2] > 80 && c[2] < 103) {
+//          if (stupidSumR > 1.3 * stupidSumB) {
+//              amount += .01;
+//              coinTypes.push_back(3);
+//              coinsP += 1;
+//          } else {
+             amount += .05;
+             coinTypes.push_back(2);
+             coinsN += 1;
+//          }
+     } else {
+//           if (stupidSumR > 1.3 * stupidSumB) {
+//              amount += .01;
+//              coinTypes.push_back(3);
+//              coinsP += 1;
+//          } else {
+             coinsD += 1;
+             amount += .1;
+             coinTypes.push_back(4);
+//           }
+
+     }
+    }
 //         }
        
 //         if(i == 0) {
 // //             Rect rois(0, 0, 2*c[2], 2*c[2]);       
             
 //         }
-    }
-   /* for(int i =0; i< circles.size(); i++) {
-        if ( >= 150) {
-         if (stupidSumR > 1.3 * stupidSumB) {
-              realCenter.erase(realCenter.begin() +i);
-              combo.erase(combo.begin() +i);
-              i--;
-              amount+=0;                     
-         } else {
-         amount += 1;
-         coinTypes.push_back(5);
-         coinsS += 1; 
-       }
-      } else if (combo[i].getY() + start >= 103) {
-         if (stupidSumR > 1.3 * stupidSumB) {
-              realCenter.erase(realCenter.begin() +i);
-              combo.erase(combo.begin() +i);
-              i--;
-              amount+=0;                     
-         } else {
-             amount += .25;
-             coinTypes.push_back(1);
-             coinsQ += 1;                     
-         }
-
-     }
-     else if (combo[i].getY() + start > 80 && combo[i].getY() + start < 103) {
-         if (stupidSumR > 1.3 * stupidSumB) {
-             amount += .01;
-             coinTypes.push_back(3);
-             coinsP += 1;
-         } else {
-             amount += .05;
-             coinTypes.push_back(2);
-             coinsN += 1;
-         }
-     } else {
-          if (stupidSumR > 1.3 * stupidSumB) {
-             amount += .01;
-             coinTypes.push_back(3);
-             coinsP += 1;
-         } else {
-             coinsD += 1;
-             amount += .1;
-             coinTypes.push_back(4);
-          }
-
-     }
-    }
-     
-         for (long unsigned int i = 0; i < realCenter.size(); i++) {
+    
+       
+    for( int  i = 0; i < circles.size(); i++ )
+    {
+        Vec3i c = circles[i];
+        Point center = Point(c[0], c[1]);
              if (coinTypes[i] == 1) {
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start, shadeQ);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start + 1, shadeQ);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start + 2, shadeQ);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 4, shadeQ);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 3, shadeQ);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 2, shadeQ);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 1, shadeQ);
-                 setPixel(realCenter[i].getX(), realCenter[i].getY(), shadeQ[0], shadeQ[1], shadeQ[2], false);
+                circle( image, center, c[2], Scalar(shadeQ[0], shadeQ[1], shadeQ[2]), 3, LINE_AA);
              } else if (coinTypes[i] == 2) {
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start, shadeN);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start + 1, shadeN);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start + 2, shadeN);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 4, shadeN);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 3, shadeN);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 2, shadeN);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 1, shadeN);
-                 setPixel(realCenter[i].getX(), realCenter[i].getY(), shadeN[0], shadeN[1], shadeN[2], false);
+                 circle( image, center, c[2], Scalar(shadeN[0], shadeN[1], shadeN[2]), 3, LINE_AA);
              } else if (coinTypes[i] == 3) {
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start, shadeP);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start + 1, shadeP);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start + 2, shadeP);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 4, shadeP);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 3, shadeP);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 2, shadeP);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 1, shadeP);
-                 setPixel(realCenter[i].getX(), realCenter[i].getY(), shadeP[0], shadeP[1], shadeP[2], false);
+                 circle( image, center, c[2], Scalar(shadeP[0], shadeP[1], shadeP[2]), 3, LINE_AA);
              } else if (coinTypes[i] == 4) {
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start, shadeD);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start + 1, shadeD);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start + 2, shadeD);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 4, shadeD);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 3, shadeD);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 2, shadeD);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 1, shadeD);
-                 setPixel(realCenter[i].getX(), realCenter[i].getY(), shadeD[0], shadeD[1], shadeD[2], false);
+                 circle( image, center, c[2], Scalar(shadeD[0], shadeD[1], shadeD[2]), 3, LINE_AA);
              } else {
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start, shadeS);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start + 1, shadeS);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), combo[i].getY() + start + 2, shadeS);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 4, shadeS);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 3, shadeS);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 2, shadeS);
-                 drawCircle(realCenter[i].getX(), realCenter[i].getY(), 1, shadeS);
-                 setPixel(realCenter[i].getX(), realCenter[i].getY(), shadeS[0], shadeS[1], shadeS[2], false);
+                 circle( image, center, c[2], Scalar(shadeS[0], shadeS[1], shadeS[2]), 3, LINE_AA);
              }
 
          }
          cout << coinsS << " Silver Dollars, " << coinsQ << " Quarters, " << coinsD << " Dimes, " << coinsN << " Nickels, " << coinsP << " Pennies, " << "Total Sum: $" << amount << endl;
          ofstream outfile("results.txt");
          outfile << coinsS << " Silver Dollars, " << coinsQ << " Quarters, " << coinsD << " Dimes, " << coinsN << " Nickels, " << coinsP << " Pennies, " << "Total Sum: $" << amount << endl;
-         outfile.close();*/
+         outfile.close();
     imwrite("./Images/DetectCircle.jpg",image);
 
     return 0;
