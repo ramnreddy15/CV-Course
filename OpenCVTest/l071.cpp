@@ -83,53 +83,56 @@ int main(int argc, char** argv )
         circle(mask, Point(c[2],c[2]), c[2], Scalar(255,255,255), FILLED);
         mask = roi&mask;
         Scalar mean1 = mean(mask);
+        int stupidSumB = mean1.val[0], stupidSumG = mean1.val[1], stupidSumR = mean1.val[2];
 //         imwrite("./Images/roi.jpg",roi);
 //         imwrite("./Images/mask.jpg",roi&mask);
 //         if(abs(((mean1[0]+mean1[1]+mean1[2])/3)- 200) > 20){
-      if (c[2] >= 150) {
-//          if (stupidSumR > 1.3 * stupidSumB) {
-//               realCenter.erase(realCenter.begin() +i);
-//               combo.erase(combo.begin() +i);
-//               i--;
-//               amount+=0;                     
-//          } else {
+      if(abs(220-stupidSumB) <= 38 && abs(220-stupidSumG) <= 38 && abs(220-stupidSumR) <= 38) {
+        circles.erase(circles.begin() +i);
+        i--;
+        amount+=0;            
+      } else if (c[2] >= 150) {
+         if (stupidSumR > 1.3 * stupidSumB) {
+              circles.erase(circles.begin() +i);
+              i--;
+              amount+=0;                     
+         } else {
          amount += 1;
          coinTypes.push_back(5);
          coinsS += 1; 
-//        }
-      } else if (c[2] >= 103) {
-//          if (stupidSumR > 1.3 * stupidSumB) {
-//               realCenter.erase(realCenter.begin() +i);
-//               combo.erase(combo.begin() +i);
-//               i--;
-//               amount+=0;                     
-//          } else {
+       }
+      } else if (c[2] >= 105) {
+         if (stupidSumR > 1.3 * stupidSumB) {
+              circles.erase(circles.begin() +i);
+              i--;
+              amount+=0;                     
+         } else {
              amount += .25;
              coinTypes.push_back(1);
              coinsQ += 1;                     
-//          }
+         }
 
      }
-     else if (c[2] > 80 && c[2] < 103) {
-//          if (stupidSumR > 1.3 * stupidSumB) {
-//              amount += .01;
-//              coinTypes.push_back(3);
-//              coinsP += 1;
-//          } else {
+     else if (c[2] > 80 && c[2] < 105) {
+         if (stupidSumR > 1.3 * stupidSumB) {
+             amount += .01;
+             coinTypes.push_back(3);
+             coinsP += 1;
+         } else {
              amount += .05;
              coinTypes.push_back(2);
              coinsN += 1;
-//          }
+         }
      } else {
-//           if (stupidSumR > 1.3 * stupidSumB) {
-//              amount += .01;
-//              coinTypes.push_back(3);
-//              coinsP += 1;
-//          } else {
+          if (stupidSumR > 1.3 * stupidSumB) {
+             amount += .01;
+             coinTypes.push_back(3);
+             coinsP += 1;
+         } else {
              coinsD += 1;
              amount += .1;
              coinTypes.push_back(4);
-//           }
+          }
 
      }
     }
