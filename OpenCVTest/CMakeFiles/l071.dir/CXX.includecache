@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest/l071.cpp
+/cluster/2023rreddy/CV-Course/OpenCVTest/l071.cpp
 stdio.h
 -
 iostream
@@ -146,16 +146,6 @@ altivec.h
 hal/msa_macros.h
 /usr/include/opencv4/opencv2/core/hal/msa_macros.h
 wasm_simd128.h
--
-emmintrin.h
--
-Intrin.h
--
-arm_neon.h
--
-arm_neon.h
--
-altivec.h
 -
 
 /usr/include/opencv4/opencv2/core/cv_cpu_helper.h

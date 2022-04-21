@@ -1,0 +1,5 @@
+easy image:
+./l071 -L 50 -H 100 -F ./coinsEasy3-2018__.jpg -MDist 150 -TCircle 33 -MinRadius 70 -MaxRadius 130 -Blur 5 -QLimit 105
+medium image:
+./l071 -L 30 -H 36 -F ./coinsHarder2-2018__.jpg -MDist 90 -TCircle 57 -MinRadius 70 -MaxRadius 130 -Blur 3 -QLimit 103
+hard image:

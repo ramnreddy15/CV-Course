@@ -44,10 +44,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest
+CMAKE_SOURCE_DIR = /cluster/2023rreddy/CV-Course/OpenCVTest
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest
+CMAKE_BINARY_DIR = /cluster/2023rreddy/CV-Course/OpenCVTest
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -74,14 +74,14 @@ clean: CMakeFiles/l071.dir/clean
 CMakeFiles/l071.dir/all:
 	$(MAKE) -f CMakeFiles/l071.dir/build.make CMakeFiles/l071.dir/depend
 	$(MAKE) -f CMakeFiles/l071.dir/build.make CMakeFiles/l071.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest/CMakeFiles --progress-num=1,2 "Built target l071"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/cluster/2023rreddy/CV-Course/OpenCVTest/CMakeFiles --progress-num=1,2 "Built target l071"
 .PHONY : CMakeFiles/l071.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/l071.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /cluster/2023rreddy/CV-Course/OpenCVTest/CMakeFiles 2
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/l071.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /afs/csl.tjhsst.edu/students/2023/2023rreddy/Desktop/CV-Course/OpenCVTest/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /cluster/2023rreddy/CV-Course/OpenCVTest/CMakeFiles 0
 .PHONY : CMakeFiles/l071.dir/rule
 
 # Convenience name for target.
