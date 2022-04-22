@@ -4,7 +4,9 @@
 
 #include <stdio.h>
 
-#define _USE_MATH_DEFINES#include <cmath>
+#define _USE_MATH_DEFINES
+
+#include <cmath>
 
 #include <iostream>
 
@@ -58,18 +60,18 @@ vector<Mat> getPoints(int vertices) {
         shapePoints.push_back((Mat_ < double > (3, 1) << -phi, -1, 0));
         shapePoints.push_back((Mat_ < double > (3, 1) << -phi, 1, 0));
     } else if(vertices == 20) {
-        shapePoints.push_back((Mat_ < double > (3, 1) << 0, 1/phi, -phi));
-        shapePoints.push_back((Mat_ < double > (3, 1) << 0, -1/phi, -phi));
-        shapePoints.push_back((Mat_ < double > (3, 1) << 0, 1/phi, phi));
-        shapePoints.push_back((Mat_ < double > (3, 1) << 0, -1/phi, phi));
-        shapePoints.push_back((Mat_ < double > (3, 1) << -phi, 0, 1/phi));
-        shapePoints.push_back((Mat_ < double > (3, 1) << -phi, 0, -1/phi));
-        shapePoints.push_back((Mat_ < double > (3, 1) << phi, 0, 1/phi));
-        shapePoints.push_back((Mat_ < double > (3, 1) << phi, 0, -1/phi));
-        shapePoints.push_back((Mat_ < double > (3, 1) << -1/phi, -phi, 0));
-        shapePoints.push_back((Mat_ < double > (3, 1) << -1/phi, phi, 0));
-        shapePoints.push_back((Mat_ < double > (3, 1) << 1/phi, -phi, 0));
-        shapePoints.push_back((Mat_ < double > (3, 1) << 1/phi, phi, 0));
+        shapePoints.push_back((Mat_ < double > (3, 1) << 0, phi, -1/phi));
+        shapePoints.push_back((Mat_ < double > (3, 1) << 0, -phi, -1/phi));
+        shapePoints.push_back((Mat_ < double > (3, 1) << 0, phi, 1/phi));
+        shapePoints.push_back((Mat_ < double > (3, 1) << 0, -phi, 1/phi));
+        shapePoints.push_back((Mat_ < double > (3, 1) << -1/phi, 0, phi));
+        shapePoints.push_back((Mat_ < double > (3, 1) << -1/phi, 0, -phi));
+        shapePoints.push_back((Mat_ < double > (3, 1) << 1/phi, 0, phi));
+        shapePoints.push_back((Mat_ < double > (3, 1) << 1/phi, 0, -phi));
+        shapePoints.push_back((Mat_ < double > (3, 1) << -phi, 1/phi, 0));
+        shapePoints.push_back((Mat_ < double > (3, 1) << -phi, -1/phi, 0));
+        shapePoints.push_back((Mat_ < double > (3, 1) << phi, 1/phi, 0));
+        shapePoints.push_back((Mat_ < double > (3, 1) << phi, -1/phi, 0));
         shapePoints.push_back((Mat_ < double > (3, 1) << 1, 1, 1));
         shapePoints.push_back((Mat_ < double > (3, 1) << -1, 1, 1));
         shapePoints.push_back((Mat_ < double > (3, 1) << -1, -1, 1));
@@ -84,35 +86,36 @@ vector<Mat> getPoints(int vertices) {
 
 void part1() {
   int angle = 1;
-  int vertices = 20;
-  double sideLength = 2; // 2 for cube; 1 for tetrahedron; sqrt(2) for octahedron; 2 for icosehdron; 2 for dodecahedron
+  vector<int> vertices = {8,4,6,12,20};
+  vector<double> sideLength = {2,1,sqrt(2),2,sqrt(5)+1};
   Mat rotationMatrix = generateRotationMat(0, (angle * M_PI) / 180, (angle * M_PI) / 180);
-  VideoWriter output("output.avi", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 30, cv::Size(600, 800));
-  vector < Mat > shapePoints = getPoints(vertices);
-  vector < Point > pointPairs;
+  VideoWriter output("rotation.avi", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 30, cv::Size(600, 800));
   Mat frame = Mat::zeros(Size(600, 800), CV_8UC3);
-  for (int i = 0; i < shapePoints.size(); i++) {
-    for (int j = i; j < shapePoints.size(); j++) {
-      double x1 = shapePoints[i].at < double > (0, 0), y1 = shapePoints[i].at < double > (1, 0), z1 = shapePoints[i].at < double > (2, 0), x2 = shapePoints[j].at < double > (0, 0), y2 = shapePoints[j].at < double > (1, 0), z2 = shapePoints[j].at < double > (2, 0);
-      if (sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2) + pow(z2 - z1, 2)) == sideLength) {
-        pointPairs.push_back(Point(i, j));
+  for(int type = 0; type<vertices.size(); type++) {
+        vector < Mat > shapePoints = getPoints(vertices[type]);
+      vector < Point > pointPairs;
+      for (int i = 0; i < shapePoints.size(); i++) {
+        for (int j = i; j < shapePoints.size(); j++) {
+          double x1 = shapePoints[i].at < double > (0, 0), y1 = shapePoints[i].at < double > (1, 0), z1 = shapePoints[i].at < double > (2, 0), x2 = shapePoints[j].at < double > (0, 0), y2 = shapePoints[j].at < double > (1, 0), z2 = shapePoints[j].at < double > (2, 0);
+          if (sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2) + pow(z2 - z1, 2)) == sideLength[type]) {
+            pointPairs.push_back(Point(i, j));
+          }
+        }
       }
-    }
-  }
-  for (int i = 0; i < 360 / angle; i++) {
-    if (i != 0) {
-      for (int j = 0; j < shapePoints.size(); j++) {
-        shapePoints[j] = rotationMatrix * shapePoints[j];
+      for (int i = 0; i < 360 / angle; i++) {
+        if (i != 0) {
+          for (int j = 0; j < shapePoints.size(); j++) {
+            shapePoints[j] = rotationMatrix * shapePoints[j];
+          }
+        }
+        for (Point p: pointPairs) {
+          double x1 = shapePoints[p.x].at < double > (0, 0), y1 = shapePoints[p.x].at < double > (1, 0), x2 = shapePoints[p.y].at < double > (0, 0), y2 = shapePoints[p.y].at < double > (1, 0);
+          line(frame, Point(x1 * 50 + 300, y1 * 50 + 400), Point(x2 * 50 + 300, y2 * 50 + 400), Scalar(0, 127, 255), 1, LINE_AA);
+        }
+        output.write(frame);
+        frame = Mat::zeros(Size(600, 800), CV_8UC3);
       }
-    }
-    for (Point p: pointPairs) {
-      double x1 = shapePoints[p.x].at < double > (0, 0), y1 = shapePoints[p.x].at < double > (1, 0), x2 = shapePoints[p.y].at < double > (0, 0), y2 = shapePoints[p.y].at < double > (1, 0);
-      line(frame, Point(x1 * 50 + 300, y1 * 50 + 400), Point(x2 * 50 + 300, y2 * 50 + 400), Scalar(0, 127, 255), 1, LINE_AA);
-    }
-    output.write(frame);
-    frame = Mat::zeros(Size(600, 800), CV_8UC3);
   }
-  cout << "M = " << endl << " " << rotationMatrix << endl << endl;
   output.release();
 }
 
