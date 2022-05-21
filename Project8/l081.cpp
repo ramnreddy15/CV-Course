@@ -105,7 +105,6 @@ void part1() {
         sqrt(5) - 1
     };
     Mat rotationMatrix = generateRotationMat(0, (angle * M_PI) / 180, (angle * M_PI) / 180);
-    cout << rotationMatrix << endl;
     VideoWriter output("rotation.avi", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 30, cv::Size(cols, rows));
     Mat frame = Mat::zeros(Size(cols, rows), CV_8UC3);
     ofstream outfile("coordinates.txt");
@@ -128,8 +127,12 @@ void part1() {
             }
             if (type == 0 && i <= 3) {
                 for (int j = 0; j < shapePoints.size(); j++) {
-                    x2 = shapePoints[i].at < double > (0, 0), y2 = shapePoints[i].at < double > (1, 0), z2 = shapePoints[i].at < double > (2, 0);
-                    outfile << "(" << x2 << "," << y2 << "," << z2 << ")";
+                    x2 = shapePoints[j].at < double > (0, 0), y2 = shapePoints[j].at < double > (1, 0), z2 = shapePoints[j].at < double > (2, 0);
+                    if(i!=0) {
+                        outfile << "(" << x2*scale << "," << y2*scale << "," << z2*scale << ")";
+                    } else {
+                        outfile << "(" << x2 << "," << y2 << "," << z2 << ")";
+                    }
                     if (j != shapePoints.size() - 1) {
                         outfile << ", ";
                     }
