@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/romiovictor123/CV-Course/Project8/l083.cpp
+stdio.h
+-
+cmath
+-
+iostream
+-
+fstream
+-
+opencv2/opencv.hpp
+-
+opencv2/highgui/highgui.hpp
+-
+

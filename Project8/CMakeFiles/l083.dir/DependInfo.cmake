@@ -4,13 +4,12 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/cluster/2023rreddy/CV-Course/Project8/l083.cpp" "/cluster/2023rreddy/CV-Course/Project8/CMakeFiles/l083.dir/l083.cpp.o"
+  "/home/romiovictor123/CV-Course/Project8/l083.cpp" "/home/romiovictor123/CV-Course/Project8/CMakeFiles/l083.dir/l083.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/usr/include/opencv4"
   )
 
 # Targets to which this target links.
