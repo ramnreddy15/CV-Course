@@ -252,7 +252,7 @@ void part3() {
     Mat rotationMatrix = generateRotationMat(0, (angle * M_PI) / 180, (angle * M_PI) / 180);
     VideoWriter output("rotation.avi", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 30, cv::Size(cols, rows));
     Mat frame = Mat::zeros(Size(cols, rows), CV_8UC3);
-    ofstream outfile("coordinates.txt");
+    ofstream outfile("log.txt");
     for (int type = 0; type < vertices.size(); type++) {
         vector < Mat > shapePoints = getPoints(vertices[type]);
         vector < Vec<double,3> > choosenPoints;
@@ -304,7 +304,7 @@ void part3() {
                 x2 = (Pv2-P02).dot(w1)/w1.dot(w1);
                 line(frame, Point(x1 * scale + translateX, y1 * scale + translateY), Point(x2 * scale + translateX, y2 * scale + translateY), Scalar(0, 127, 255), 1, LINE_AA);
                 if(i==0 && !done) {
-                    outfile << "The plane defined by (x-a)*n =0 is:\n  a = (" << aPlane[0]*100 << ", " << aPlane[1]*100 << ", " << aPlane[2] << ")\n  n = (" << n[0] << ","<<n[1]<<","<<n[2] << ")\nThe eye e is:\n  e = (" << eye[0]*100 << ", " << eye[1]*100 << ", " << eye[2]*100 << ")" <<  endl;
+                    outfile << "The plane defined by (x-a)*n =0 is:\n  a = (" << aPlane[0]*100 << ", " << aPlane[1]*100 << ", " << aPlane[2]*100 << ")\n  n = (" << n[0] << ","<<n[1]<<","<<n[2] << ")\nThe eye e is:\n  e = (" << eye[0]*100 << ", " << eye[1]*100 << ", " << eye[2]*100 << ")" <<  endl;
                     outfile << "The coordinates in the plane x = p0 + u*w1 + v*w2 is:\n (where p0 is the origin, preferraby the projection of the center of the cube in first frame, w1 and w2 are 2 perpendicular vertices in the plane)" << endl;
                     outfile << "  p0 = (" <<  P01[0] << "," << P01[1] << "," << P01[2] << ")" << endl;
                     outfile << "  w1 = (" << w1[0] << "," << w1[1] << "," << w1[2] << ")" << endl;
