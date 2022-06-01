@@ -1,6 +1,6 @@
 // Ram Reddy
 // Period 4
-// 04/17/2022
+// 05/29/2022
 
 #include <stdio.h>
 
@@ -33,15 +33,6 @@ void part1() {
     Size patternsize(7,7); //interior number of corners
     
     Mat gray;
-
-    // cubePoints.push_back(Point3f(0, 0, 2));
-    // cubePoints.push_back(Point3f(1, 2, 2));
-    // cubePoints.push_back(Point3f(0, 2, 2));
-    // cubePoints.push_back(Point3f(2, 2, 0));
-    // cubePoints.push_back(Point3f(2, 0, 2));
-    // cubePoints.push_back(Point3f(2, 0, 0));
-    // cubePoints.push_back(Point3f(0, 0, 0));
-    // cubePoints.push_back(Point3f(0, 2, 0));
     cubePoints.push_back(Point3f(1, 1, -2));
     cubePoints.push_back(Point3f(1, -1, -2));
     cubePoints.push_back(Point3f(-1, -1, -2));
