@@ -1,6 +1,6 @@
 # Prerequisites
 *.d
-
+*.avi
 # For VS nad VSCode
 CppProperties.json
 .vs/**
